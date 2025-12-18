@@ -3182,6 +3182,21 @@ decode QUADRANT default Unknown::unknown() {
                         Fd_bits = fd.v;
                     }}, FloatCvtOp);
                 }
+                0x24: rfmac_s({{
+                    RM_REQUIRED;
+                    freg_t fd;
+                    fd = freg(f32_mulAdd(f32(f32(freg(Fs1_bits)).v ^
+                                             mask(31, 31)),
+                                    f32(freg(Fs2_bits)),
+                                    f32(f32(freg(Fs3_bits)).v ^
+                                        mask(31, 31))));
+                    Fd_bits = fd.v;
+                }}, FloatMultAccOp);
+                0x38: rfsmac_s({{
+                RM_REQUIRED;
+                    freg_t fd;
+                    fd = freg(f32(Fs1_bits))
+                }}, FloatAddOp);
                 0x2c: fsqrt_s({{
                     if (RS2 != 0) {
                         return std::make_shared<IllegalInstFault>(
