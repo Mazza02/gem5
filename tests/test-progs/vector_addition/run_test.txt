@@ -1,0 +1,40 @@
+
+Compilation and run (running spike):
+
+clang --target=riscv64-unknown-elf -march=rv64gcv -mabi=lp64d v_addition.c -o v_risc_vector_add 
+
+(EITHER OR)
+
+riscv64-unknown-elf-gcc -march=rv64gcv v_addition.c add_increment.s -g -o v_risc_vector_add 
+
+spike --isa=rv64gcv pk v_risc_vector_add v_risc_vector_add 1> result.log
+
+
+
+Compilation and Disassembly (debugging assembly code): 
+
+riscv64-unknown-elf-gcc -march=rv64gcv v_addition.c -g -o v_risc_vector_add.out
+
+riscv64-unknown-elf-objdump -d --line-numbers -S v_risc_vector_add.out
+
+riscv64-unknown-elf-objdump -d --line-numbers --source v_risc_vector_add.out > disassembly.txt (into a file!)
+
+
+
+
+
+
+create custom instruction:
+
+https://fprox.substack.com/p/adding-a-new-risc-v-extension-to
+
+add opcode via unratified/// 
+
+make that file and get the encoding.out.h values for the custom instruction
+
+add it to encoding.h and create instruction behaviour in a new file named after it 
+
+$ ../configure --prefix=$RISCV
+$ make
+
+in build file for spike :D

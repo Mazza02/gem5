@@ -2284,6 +2284,7 @@ decode QUADRANT default Unknown::unknown() {
         }
         0x0c: decode FUNCT3 {
             format ROp {
+                
                 0x0: decode KFUNCT5 {
                     0x00: decode BS {
                         0x0: add({{
@@ -2399,7 +2400,11 @@ decode QUADRANT default Unknown::unknown() {
                             }});
                         }
                     }
+
+                                    
+                    
                 }
+
                 0x1: decode FUNCT7 {
                     0x0: sll({{
                         Rd = rvSext(Rs1 << rvSelect(Rs2<4:0>, Rs2<5:0>));
@@ -2420,6 +2425,9 @@ decode QUADRANT default Unknown::unknown() {
                         }
                         Rd = rvSext(result);
                     }});
+                    0x09: add_increment ({{uint32_t Rd_32 = (uint32_t)(Rs1_ud) + (uint32_t)(Rs2_ud);
+                    Rd = Rd_32 + 1;
+                    }}, IntAluOp);
                     0x14: bset({{
                         Rs2 &= rvSelect(32 - 1, 64 - 1);
                         Rd = rvSext(Rs1 | (UINT64_C(1) << Rs2));
@@ -2610,6 +2618,7 @@ decode QUADRANT default Unknown::unknown() {
                         Rd = rvSext(Rs1 & (~Rs2));
                     }});
                 }
+                
             }
         }
 
@@ -5946,7 +5955,6 @@ decode QUADRANT default Unknown::unknown() {
             Rd = rvSext(NPC);
             NPC = rvSext(PC + imm);
         }}, IsDirectControl, IsUncondControl);
-
         0x1c: decode FUNCT3 {
             format SystemOp {
                 0x0: decode FUNCT7 {
@@ -6359,7 +6367,7 @@ decode QUADRANT default Unknown::unknown() {
 
             }
         }
-
         0x1e: M5Op::M5Op();
     }
+
 }

@@ -1,0 +1,7 @@
+To run mac:
+
+./build/ALL/gem5.opt configs/riscv/simple-riscv.py
+
+
+
+change the pathing in the simple-riscv if its not on mac!
