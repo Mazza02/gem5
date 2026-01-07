@@ -5912,6 +5912,19 @@ decode QUADRANT default Unknown::unknown() {
             }
         }
 
+    0x16: decode FUNCT3 {
+        format FPROp {
+            0x0: fmac_s({{
+                    RM_REQUIRED;
+                    freg_t fd;
+                    fd = freg(f32_mulAdd(f32(freg(Fs1_bits)),
+                                         f32(freg(Fs2_bits)),
+                                         f32(freg(Fs3_bits))));
+                    Fd_bits = fd.v;
+                }}, FloatMultAccOp);
+        }
+    }
+
         0x18: decode FUNCT3 {
             format BOp {
                 0x0: beq({{
