@@ -1,6 +1,6 @@
 To run mac:
 
-./build/ALL/gem5.opt configs/riscv/simple-riscv.py
+./build/RISCV/gem5.opt configs/riscv/simple-riscv.py
 
 
 
