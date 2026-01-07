@@ -55,7 +55,7 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
     "../../",
-    "tests/test-progs/vector_addition/v_risc_vector_add",
+    "tests/test-progs/mac/mac",
 )
 
 system.workload = SEWorkload.init_compatible(binary)
