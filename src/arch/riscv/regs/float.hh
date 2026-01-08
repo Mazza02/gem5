@@ -215,6 +215,32 @@ const std::vector<std::string> RegNames = {
 
 } // namespace float_reg
 
+namespace zrfloat_reg
+{
+
+enum : RegIndex
+{
+    _ZrFt0Idx,
+    NumRegs
+};
+
+} // namespace zrfloat_reg
+
+inline constexpr RegClass ZrfloatRegClass(FloatRegClass, ZrFloatRegClassName,
+        zrfloat_reg::NumRegs, debug::FloatRegs);
+
+namespace zrfloat_reg
+{
+
+inline constexpr RegId
+    Zr0 = ZrfloatRegClass[_ZrFt0Idx];
+
+const std::vector<std::string> RegNames = {
+    "zr0"
+};
+
+} // namespace zrfloat_reg
+
 inline float16_t
 fsgnj16(float16_t a, float16_t b, bool n, bool x) {
     if (n) b.v = ~b.v;
