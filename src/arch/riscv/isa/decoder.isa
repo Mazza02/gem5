@@ -3183,13 +3183,20 @@ decode QUADRANT default Unknown::unknown() {
                     }}, FloatCvtOp);
                 }
                 0x24: rfmac_s({{
-                    RM_REQUIRED;
-                    freg_t fd;
-                    fd = freg(f32_mulAdd(f32(freg(Fs1_bits)),
-                                         f32(freg(Fs2_bits)),
-                                         f32(freg(Zrf_bits))));
-                    Zrf_bits = fd.v;
-                }}, FloatMultAccOp);
+    RM_REQUIRED;
+    
+    printf("DEBUG rfmac_s: Fs1=0x%lx, Fs2=0x%lx, Zrf_old=0x%lx\n", 
+            (uint64_t)Fs1_bits, (uint64_t)Fs2_bits, (uint64_t)Zrf_bits);
+
+    freg_t fd;
+    fd = freg(f32_mulAdd(f32(freg(Fs1_bits)),
+                         f32(freg(Fs2_bits)),
+                         f32(freg(Zrf_bits))));
+                         
+    printf("DEBUG rfmac_s: New Zrf (fd.v)=0x%lx\n", (uint64_t)fd.v);
+
+    Zrf_bits = fd.v;
+}}, FloatMultAccOp);
                 0x38: rfsmac_s({{
                     Fd_bits = Zrf_bits;
                 }}, FloatAddOp);

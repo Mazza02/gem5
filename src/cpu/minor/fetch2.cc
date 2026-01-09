@@ -48,6 +48,8 @@
 #include "debug/Branch.hh"
 #include "debug/Fetch.hh"
 #include "debug/MinorTrace.hh"
+#include "debug/zr1Debug.hh"
+#include "arch/riscv/regs/float.hh"
 
 namespace gem5
 {
@@ -238,6 +240,13 @@ Fetch2::predictBranch(MinorDynInstPtr inst, BranchData &branch)
 void
 Fetch2::evaluate()
 {
+ThreadContext *tc = cpu.getContext(0);
+
+uint64_t zr1_val = tc->getReg(RiscvISA::zrfloat_reg::Zr1);
+
+if (zr1_val != 0.0) {
+    DPRINTF(zr1Debug, "Fetch 2 accessed zr1: %f\n", (double)zr1_val);
+}
     /* Push input onto appropriate input buffer */
     if (!inp.outputWire->isBubble())
         inputBuffer[inp.outputWire->id.threadId].setTail(*inp.outputWire);

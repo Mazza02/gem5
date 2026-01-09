@@ -41,6 +41,8 @@
 #include "base/trace.hh"
 #include "cpu/minor/pipeline.hh"
 #include "debug/Decode.hh"
+#include "arch/riscv/regs/float.hh"
+#include "debug/zr1Debug.hh"
 
 namespace gem5
 {
@@ -280,6 +282,13 @@ Decode::evaluate()
         insts_out.threadId = tid;
         nextStageReserve[tid].reserve();
     }
+    ThreadContext *tc = cpu.getContext(0);
+
+    uint64_t zr1_val = tc->getReg(RiscvISA::zrfloat_reg::Zr1);
+
+    if (zr1_val != 0.0) {
+    DPRINTF(zr1Debug, "Decode accessed zr1: %f\n", (double)zr1_val);
+}
 
     /* If we still have input to process and somewhere to put it,
      *  mark stage as active */
