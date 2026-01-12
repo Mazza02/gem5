@@ -225,17 +225,19 @@ enum : RegIndex
     NumRegs
 };
 
+inline constexpr RegClass zrFloatRegClass(FloatRegClass, ZrFloatRegClassName,
+        zrfloat_reg::NumRegs, debug::FloatRegs);
+
 }
 
-inline constexpr RegClass ZrfloatRegClass(FloatRegClass, ZrFloatRegClassName,
-        zrfloat_reg::NumRegs, debug::FloatRegs);
+
 
 namespace zrfloat_reg
 {
 
 inline constexpr RegId
-    Zr0 = floatRegClass[_ZrFt0Idx],
-    Zr1 = floatRegClass[_ZrFt1Idx];
+    Zr0 = zrFloatRegClass[_ZrFt0Idx],
+    Zr1 = zrFloatRegClass[_ZrFt1Idx];
 
 const std::vector<std::string> RegNames = {
     "zr0", "zr1"
