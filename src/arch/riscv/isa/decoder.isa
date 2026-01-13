@@ -3187,7 +3187,7 @@ decode QUADRANT default Unknown::unknown() {
                     freg_t fd;
     fd = freg(f32_mulAdd(f32(freg(Fs1_bits)),
                          f32(freg(Fs2_bits)),
-                         f32(freg(Zrf_bits))));
+                         f32(freg(boxF32(Zrf_bits)))));
     Zrf_bits = fd.v;
 }}, FloatMultAccOp);
                 0x38: rfsmac_s({{

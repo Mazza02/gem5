@@ -1078,7 +1078,6 @@ void
 ISA::resetThread()
 {
     Reset().invoke(tc);
-    tc->setReg(zrfloat_reg::Zr1, boxF32(0));
 }
 
 bool
