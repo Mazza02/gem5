@@ -432,6 +432,7 @@ void ISA::clear()
     // triggers, starting at zero. simply set a different value here.
     miscRegFile[MISCREG_TSELECT] = 1;
     miscRegFile[MISCREG_NMIE] = enableSmrnmi() ? 0 : 1;
+
 }
 
 Fault
@@ -1077,6 +1078,7 @@ void
 ISA::resetThread()
 {
     Reset().invoke(tc);
+    tc->setReg(zrfloat_reg::Zr1, boxF32(0));
 }
 
 bool

@@ -581,15 +581,6 @@ Fetch1::evaluate()
     const BranchData &fetch2_branch = *prediction.outputWire;
     ForwardLineData &line_out = *out.inputWire;
 
-    ThreadContext *tc = cpu.getContext(0);
-    uint64_t zr1_val = tc->getReg(RiscvISA::zrfloat_reg::Zr1);
-    if (zr1_val != 0.0) {
-    DPRINTF(zr1Debug, "Fetch 1 accessed zr1: %f\n", (double)zr1_val);
-}
-    if (zr1_val==18446744071557873664) {
-        tc->setReg(RiscvISA::zrfloat_reg::Zr1, 0.0);
-    }
-
     assert(line_out.isBubble());
 
     for (ThreadID tid = 0; tid < cpu.numThreads; tid++)
