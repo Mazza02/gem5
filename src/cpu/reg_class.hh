@@ -67,6 +67,7 @@ enum RegClassType
     VecPredRegClass,
     MatRegClass,        ///< Matrix Register
     CCRegClass,         ///< Condition-code register
+    ZrFloatRegClass,
     MiscRegClass,       ///< Control (misc) register
     InvalidRegClass = -1
 };

@@ -152,6 +152,9 @@ printRegName(std::ostream &os, const RegId& reg)
       case FloatRegClass:
         os << 'f' << reg.index();
         break;
+      case ZrFloatRegClass:
+        os << 'f' << reg.index();
+        break;
       case VecRegClass:
         os << 'v' << reg.index();
         break;

@@ -225,7 +225,7 @@ enum : RegIndex
     NumRegs
 };
 
-inline constexpr RegClass zrFloatRegClass(FloatRegClass, ZrFloatRegClassName,
+inline constexpr RegClass zrFloatRegClass(ZrFloatRegClass, ZrFloatRegClassName,
         zrfloat_reg::NumRegs, debug::FloatRegs);
 
 }

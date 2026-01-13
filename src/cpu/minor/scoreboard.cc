@@ -85,6 +85,10 @@ Scoreboard::findIndex(const RegId& reg, Index &scoreboard_index)
           /* Don't bother with Misc registers */
         ret = false;
         break;
+      case ZrFloatRegClass:
+        scoreboard_index = zrFloatRegOffset + reg.index();
+        ret = true;
+        break;
       case InvalidRegClass:
         ret = false;
         break;

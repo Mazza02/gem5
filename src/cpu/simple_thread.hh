@@ -96,7 +96,7 @@ class SimpleThread : public ThreadState, public ThreadContext
     typedef ThreadContext::Status Status;
 
   protected:
-    std::array<RegFile, CCRegClass + 1> regFiles;
+    std::array<RegFile, CCRegClass + 2> regFiles;
 
     BaseISA *const isa;    // one "instance" of the current ISA.
 
