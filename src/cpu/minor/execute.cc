@@ -66,11 +66,13 @@ Execute::Execute(const std::string &name_,
     MinorCPU &cpu_,
     const BaseMinorCPUParams &params,
     Latch<ForwardInstData>::Output inp_,
-    Latch<BranchData>::Input out_) :
+    Latch<BranchData>::Input out_,
+    Latch<APRData>::Input APR_inp_):
     Named(name_),
     inp(inp_),
     out(out_),
     cpu(cpu_),
+    APR_inp(APR_inp_),
     issueLimit(params.executeIssueLimit),
     memoryIssueLimit(params.executeMemoryIssueLimit),
     commitLimit(params.executeCommitLimit),
@@ -1431,10 +1433,11 @@ Execute::evaluate()
 
     unsigned int num_issued = 0;
 
-    ThreadContext *tc = cpu.getContext(0);
-    uint64_t zr1_val = tc->getReg(RiscvISA::zrfloat_reg::Zr1);
-    if (zr1_val != 0.0) {
-    DPRINTF(zr1Debug, "Execute accessed zr1: %f\n", (double)zr1_val);
+    APRData &wire = *APR_inp.inputWire;
+
+    uint64_t APR_val = wire.aprValue;
+    if(APR_val != RegVal(0)){
+        DPRINTF(zr1Debug, "APR Value: %f\n", (double)APR_val);
     }
 
     /* Do all the cycle-wise activities for dcachePort here to potentially
@@ -1894,6 +1897,17 @@ Execute::instIsHeadInst(MinorDynInstPtr inst)
         ret = executeInfo[inst->id.threadId].inFlightInsts->front().inst->id == inst->id;
 
     return ret;
+}
+
+void
+Execute::setAPRDatavalue(RegVal val)
+{
+    APRData &wire = *APR_inp.inputWire;
+
+    wire.aprValue = val;
+    wire.bubble = false;
+
+    cpu.lastAprResult = val;
 }
 
 MinorCPU::MinorCPUPort &

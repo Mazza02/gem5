@@ -55,11 +55,13 @@ Decode::Decode(const std::string &name,
     const BaseMinorCPUParams &params,
     Latch<ForwardInstData>::Output inp_,
     Latch<ForwardInstData>::Input out_,
+    Latch<APRData>::Output APR_inp_,
     std::vector<InputBuffer<ForwardInstData>> &next_stage_input_buffer) :
     Named(name),
     cpu(cpu_),
     inp(inp_),
     out(out_),
+    APR_inp(APR_inp_),
     nextStageReserve(next_stage_input_buffer),
     outputWidth(params.executeInputWidth),
     processMoreThanOneInput(params.decodeCycleInput),
@@ -154,6 +156,18 @@ Decode::evaluate()
            output_index < outputWidth /* Still more output to fill */)
         {
             MinorDynInstPtr inst = insts_in->insts[decode_info.inputIndex];
+
+
+APRData &wire_out = *APR_inp.outputWire;
+
+if (!inst->isBubble() && inst->staticInst->getName() == "rfmac_s" && wire_out.aprValue > cpu.lastAprResult ) {
+    DPRINTF(zr1Debug, "Decode seeing arrived APR Value: 0x%lx\n", wire_out.aprValue);
+    DPRINTF(zr1Debug, "Decode seeing CPU variable Value: 0x%lx\n", cpu.lastAprResult);
+            inst->aprValue = wire_out.aprValue;
+            inst->hasAprBypass = true;
+
+            DPRINTF(zr1Debug, "Decode seeing arrived APR Value after: 0x%lx\n", wire_out.aprValue);
+        }
 
             if (inst->isBubble()) {
                 /* Skip */
@@ -282,13 +296,6 @@ Decode::evaluate()
         insts_out.threadId = tid;
         nextStageReserve[tid].reserve();
     }
-    ThreadContext *tc = cpu.getContext(0);
-
-    uint64_t zr1_val = tc->getReg(RiscvISA::zrfloat_reg::Zr1);
-
-    if (zr1_val != 0.0) {
-    DPRINTF(zr1Debug, "Decode accessed zr1: %f\n", (double)zr1_val);
-}
 
     /* If we still have input to process and somewhere to put it,
      *  mark stage as active */

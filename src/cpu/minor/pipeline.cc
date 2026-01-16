@@ -66,12 +66,13 @@ Pipeline::Pipeline(MinorCPU &cpu_, const BaseMinorCPUParams &params) :
         params.fetch2ToDecodeForwardDelay),
     dToE(cpu.name() + ".dToE", "insts",
         params.decodeToExecuteForwardDelay),
+    EToD(cpu.name() + ".EToD", "executeToDecode", params.executeToDecodeForwardDelay),
     eToF1(cpu.name() + ".eToF1", "branch",
         params.executeBranchDelay),
     execute(cpu.name() + ".execute", cpu, params,
-        dToE.output(), eToF1.input()),
+        dToE.output(), eToF1.input(), EToD.input()),
     decode(cpu.name() + ".decode", cpu, params,
-        f2ToD.output(), dToE.input(), execute.inputBuffer),
+        f2ToD.output(), dToE.input(), EToD.output(), execute.inputBuffer),
     fetch2(cpu.name() + ".fetch2", cpu, params,
         f1ToF2.output(), eToF1.output(), f2ToF1.input(), f2ToD.input(),
         decode.inputBuffer),
@@ -143,6 +144,7 @@ Pipeline::evaluate()
     f2ToF1.evaluate();
     f2ToD.evaluate();
     dToE.evaluate();
+    EToD.evaluate();
     eToF1.evaluate();
 
     /* The activity recorder must be be called after all the stages and
@@ -236,12 +238,13 @@ Pipeline::isDrained()
     bool f1_to_f2_drained = f1ToF2.empty();
     bool f2_to_f1_drained = f2ToF1.empty();
     bool f2_to_d_drained = f2ToD.empty();
+    bool e_to_d_drained = EToD.empty();
     bool d_to_e_drained = dToE.empty();
 
     bool ret = fetch1_drained && fetch2_drained &&
         decode_drained && execute_drained &&
         f1_to_f2_drained && f2_to_f1_drained &&
-        f2_to_d_drained && d_to_e_drained;
+        f2_to_d_drained && d_to_e_drained && e_to_d_drained;
 
     DPRINTF(MinorCPU, "Pipeline undrained stages state:%s%s%s%s%s%s%s%s\n",
         (fetch1_drained ? "" : " Fetch1"),
@@ -251,6 +254,7 @@ Pipeline::isDrained()
         (f1_to_f2_drained ? "" : " F1->F2"),
         (f2_to_f1_drained ? "" : " F2->F1"),
         (f2_to_d_drained ? "" : " F2->D"),
+        (e_to_d_drained ? "" : " E->D"),
         (d_to_e_drained ? "" : " D->E")
         );
 

@@ -55,6 +55,8 @@
 #include "cpu/simple_thread.hh"
 #include "mem/request.hh"
 #include "debug/MinorExecute.hh"
+#include "debug/zr1Debug.hh"
+#include "arch/riscv/regs/float.hh"
 
 namespace gem5
 {
@@ -147,8 +149,15 @@ class ExecContext : public gem5::ExecContext
     getRegOperand(const StaticInst *si, int idx) override
     {
         const RegId &reg = si->srcRegIdx(idx);
+        
         if (reg.is(InvalidRegClass))
             return 0;
+        
+        if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx && inst->hasAprBypass) {
+        DPRINTF(zr1Debug, "Execute: Using stamped APR value 0x%lx\n", inst->aprValue);
+        return inst->aprValue;
+    }
+
         return thread.getReg(reg);
     }
 
@@ -170,7 +179,12 @@ class ExecContext : public gem5::ExecContext
         const RegId &reg = si->destRegIdx(idx);
         if (reg.is(InvalidRegClass))
             return;
+        
         thread.setReg(si->destRegIdx(idx), val);
+        if (reg.classValue() == FloatRegClass && reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx) {
+            execute.setAPRDatavalue(val);
+            DPRINTF(zr1Debug, "Setting APRData value to: 0x%lx\n", val);
+        }
     }
 
     void

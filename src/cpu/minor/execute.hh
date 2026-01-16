@@ -77,6 +77,8 @@ class Execute : public Named
     /** Pointer back to the containing CPU */
     MinorCPU &cpu;
 
+    Latch<APRData>::Input APR_inp;
+
     /** Number of instructions that can be issued per cycle */
     unsigned int issueLimit;
 
@@ -324,7 +326,8 @@ class Execute : public Named
         MinorCPU &cpu_,
         const BaseMinorCPUParams &params,
         Latch<ForwardInstData>::Output inp_,
-        Latch<BranchData>::Input out_);
+        Latch<BranchData>::Input out_,
+        Latch<APRData>::Input APR_inp_);
 
     ~Execute();
 
@@ -356,6 +359,8 @@ class Execute : public Named
     /** Like the drain interface on SimObject */
     unsigned int drain();
     void drainResume();
+    
+    void setAPRDatavalue(RegVal val);
 };
 
 } // namespace minor

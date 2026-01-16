@@ -205,6 +205,10 @@ class MinorDynInst : public RefCounted
     /** The instruction has been sent to the store buffer */
     bool inStoreBuffer = false;
 
+    RegVal aprValue = 0xffffffff00000000;
+
+    bool hasAprBypass = false;
+
     /** Can this instruction be executed out of order.  In this model,
      *  this only happens with mem refs that need to be issued early
      *  to allow other instructions to fill the fetch delay */

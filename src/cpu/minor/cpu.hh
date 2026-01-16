@@ -101,6 +101,8 @@ class MinorCPU : public BaseCPU
      *  threads[threadId]->getTC() */
     std::vector<minor::MinorThread *> threads;
 
+    RegVal lastAprResult = 0;
+
   public:
     /** Provide a non-protected base class for Minor's Ports as derived
      *  classes are created by Fetch1 and Execute */

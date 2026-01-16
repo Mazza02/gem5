@@ -318,6 +318,21 @@ class ForwardInstData /* : public ReportIF, public BubbleIF */
     void reportData(std::ostream &os) const;
 };
 
+class APRData
+{
+  public:
+
+    RegVal aprValue = 0;
+    bool bubble;
+
+    unsigned int numInsts;
+
+    ThreadID threadId = InvalidThreadID;
+
+    bool isBubble() const { return bubble; }
+
+};
+
 } // namespace minor
 } // namespace gem5
 

@@ -404,6 +404,10 @@ class BaseMinorCPU(BaseCPU):
         " (1 means next cycle)",
     )
 
+    executeToDecodeForwardDelay = Param.Cycles(
+        1, "Forward cycle delay from execute to Decode"
+    )
+
     executeFuncUnits = Param.MinorFUPool(
         MinorDefaultFUPool(), "FUlines for this processor"
     )
