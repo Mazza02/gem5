@@ -149,13 +149,16 @@ class ExecContext : public gem5::ExecContext
     getRegOperand(const StaticInst *si, int idx) override
     {
         const RegId &reg = si->srcRegIdx(idx);
-        
         if (reg.is(InvalidRegClass))
             return 0;
-        if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx){
+        //hasAprBypass causes segfault if changed to destRegIdx...
+        if (si->srcRegIdx(idx).index() == RiscvISA::zrfloat_reg::_ZrFt1Idx){
             DPRINTF(zr1Debug, "Execute context: Stamped APR value 0x%lx\n", inst->aprValue);
             DPRINTF(zr1Debug, "Execute context: Consent: %s\n", inst->hasAprBypass ? "true" : "false");
-if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx && inst->hasAprBypass) {
+            DPRINTF(zr1Debug, "name: 0x%s\n", const_cast<StaticInst*>(si)->getName());
+            DPRINTF(zr1Debug, "destRegIndex.index: 0x%d\n", si->destRegIdx(idx).index());
+            DPRINTF(zr1Debug, "srcRegIndex.index: 0x%d\n", reg.index());
+if (inst->hasAprBypass) {
         DPRINTF(zr1Debug, "Execute: Using stamped APR value 0x%lx\n", inst->aprValue);
         return inst->aprValue;
     }
@@ -183,12 +186,11 @@ if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx && inst->hasAprBypass) {
         const RegId &reg = si->destRegIdx(idx);
         if (reg.is(InvalidRegClass))
             return;
-        
-        thread.setReg(si->destRegIdx(idx), val);
         if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx) {
             execute.setAPRDatavalue(val);
             DPRINTF(zr1Debug, "Setting APRData value to: 0x%lx\n", val);
         }
+        thread.setReg(si->destRegIdx(idx), val);
     }
 
     void

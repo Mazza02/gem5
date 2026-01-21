@@ -157,11 +157,15 @@ Decode::evaluate()
         {
             MinorDynInstPtr inst = insts_in->insts[decode_info.inputIndex];
 
+            
+
 
 APRData &wire_in = *APR_out.outputWire;
 
+cpu.threads[0]->getTC()->setReg(RiscvISA::zrfloat_reg::Zr1, RegVal(0));
 
 if(!wire_in.isBubble()){
+    cpu.pipeline->EtoDFlag = false;
     wire_in.bubble = true;
     aprActive = true;
     lastAprResult = wire_in.aprValue;
@@ -190,9 +194,20 @@ if(!wire_in.isBubble()){
                 /* Static inst of a macro-op above the output_inst */
                 StaticInstPtr parent_static_inst = NULL;
                 MinorDynInstPtr output_inst = inst;
+
+    // Definitely not the way to assigning a bypass..
                 if (aprActive) {
-                    inst->aprValue = lastAprResult;
-                }
+    inst->aprValue = lastAprResult;
+    if (static_inst->numSrcRegs() > 0 && 
+       (static_inst->getName() == "c_ldsp")) {
+        
+        inst->hasAprBypass = true;
+        //aprActive = false;
+        DPRINTF(zr1Debug, "Applying APR Bypass to: %s\n", static_inst->getName());
+    } else {
+        inst->hasAprBypass = false;
+    }
+}
                 
 
                 if (inst->isFault()) {

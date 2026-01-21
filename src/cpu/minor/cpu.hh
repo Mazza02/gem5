@@ -84,13 +84,13 @@ typedef SimpleThread MinorThread;
 class MinorCPU : public BaseCPU
 {
   protected:
+    Random::RandomPtr rng = Random::genRandom();
+  public:
+
     /** pipeline is a container for the clockable pipeline stage objects.
      *  Elements of pipeline call TheISA to implement the model. */
     minor::Pipeline *pipeline;
 
-    Random::RandomPtr rng = Random::genRandom();
-
-  public:
     /** Activity recording for pipeline.  This belongs to Pipeline but
      *  stages will access it through the CPU as the MinorCPU object
      *  actually mediates idling behaviour */
