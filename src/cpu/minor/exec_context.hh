@@ -152,11 +152,15 @@ class ExecContext : public gem5::ExecContext
         
         if (reg.is(InvalidRegClass))
             return 0;
-        
-        if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx && inst->hasAprBypass) {
+        if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx){
+            DPRINTF(zr1Debug, "Execute context: Stamped APR value 0x%lx\n", inst->aprValue);
+            DPRINTF(zr1Debug, "Execute context: Consent: %s\n", inst->hasAprBypass ? "true" : "false");
+if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx && inst->hasAprBypass) {
         DPRINTF(zr1Debug, "Execute: Using stamped APR value 0x%lx\n", inst->aprValue);
         return inst->aprValue;
     }
+        }
+        
 
         return thread.getReg(reg);
     }
@@ -181,7 +185,7 @@ class ExecContext : public gem5::ExecContext
             return;
         
         thread.setReg(si->destRegIdx(idx), val);
-        if (reg.classValue() == FloatRegClass && reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx) {
+        if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx) {
             execute.setAPRDatavalue(val);
             DPRINTF(zr1Debug, "Setting APRData value to: 0x%lx\n", val);
         }

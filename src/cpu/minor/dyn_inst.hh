@@ -205,7 +205,7 @@ class MinorDynInst : public RefCounted
     /** The instruction has been sent to the store buffer */
     bool inStoreBuffer = false;
 
-    RegVal aprValue = 0xffffffff00000000;
+    RegVal aprValue = RegVal(0);
 
     bool hasAprBypass = false;
 

@@ -55,13 +55,13 @@ Decode::Decode(const std::string &name,
     const BaseMinorCPUParams &params,
     Latch<ForwardInstData>::Output inp_,
     Latch<ForwardInstData>::Input out_,
-    Latch<APRData>::Output APR_inp_,
+    Latch<APRData>::Output APR_out_,
     std::vector<InputBuffer<ForwardInstData>> &next_stage_input_buffer) :
     Named(name),
     cpu(cpu_),
     inp(inp_),
     out(out_),
-    APR_inp(APR_inp_),
+    APR_out(APR_out_),
     nextStageReserve(next_stage_input_buffer),
     outputWidth(params.executeInputWidth),
     processMoreThanOneInput(params.decodeCycleInput),
@@ -158,16 +158,28 @@ Decode::evaluate()
             MinorDynInstPtr inst = insts_in->insts[decode_info.inputIndex];
 
 
-APRData &wire_out = *APR_inp.outputWire;
+APRData &wire_in = *APR_out.outputWire;
 
-if (!inst->isBubble() && inst->staticInst->getName() == "rfmac_s" && wire_out.aprValue > cpu.lastAprResult ) {
-    DPRINTF(zr1Debug, "Decode seeing arrived APR Value: 0x%lx\n", wire_out.aprValue);
-    DPRINTF(zr1Debug, "Decode seeing CPU variable Value: 0x%lx\n", cpu.lastAprResult);
-            inst->aprValue = wire_out.aprValue;
-            inst->hasAprBypass = true;
 
-            DPRINTF(zr1Debug, "Decode seeing arrived APR Value after: 0x%lx\n", wire_out.aprValue);
-        }
+if(!wire_in.isBubble()){
+    wire_in.bubble = true;
+    aprActive = true;
+    lastAprResult = wire_in.aprValue;
+    inst->aprValue = lastAprResult;
+    inst->hasAprBypass = true;
+    DPRINTF(zr1Debug, "Decode seeing arrived APR Value in BUBBLE: 0x%lx\n", wire_in.aprValue);
+}
+
+
+
+// if (!inst->isBubble() && inst->staticInst->getName() == "rfmac_s" ) {
+//     DPRINTF(zr1Debug, "Decode seeing arrived APR Value: 0x%lx\n", wire_in.aprValue);
+//     DPRINTF(zr1Debug, "Decode seeing CPU variable Value: 0x%lx\n", lastAprResult);
+//             inst->aprValue = lastAprResult;
+//             inst->hasAprBypass = true;
+
+//             DPRINTF(zr1Debug, "Decode seeing arrived APR Value after: 0x%lx\n", wire_in.aprValue);
+//         }
 
             if (inst->isBubble()) {
                 /* Skip */
@@ -178,6 +190,10 @@ if (!inst->isBubble() && inst->staticInst->getName() == "rfmac_s" && wire_out.ap
                 /* Static inst of a macro-op above the output_inst */
                 StaticInstPtr parent_static_inst = NULL;
                 MinorDynInstPtr output_inst = inst;
+                if (aprActive) {
+                    inst->aprValue = lastAprResult;
+                }
+                
 
                 if (inst->isFault()) {
                     DPRINTF(Decode, "Fault being passed: %d\n",

@@ -1907,7 +1907,8 @@ Execute::setAPRDatavalue(RegVal val)
     wire.aprValue = val;
     wire.bubble = false;
 
-    cpu.lastAprResult = val;
+    DPRINTF(zr1Debug, "Execute stage writing 0x%lx to APR latch\n", val);
+    DPRINTF(zr1Debug, "Execute stage APR current value: 0x%lx\n", wire.aprValue);
 }
 
 MinorCPU::MinorCPUPort &

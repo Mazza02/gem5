@@ -322,12 +322,8 @@ class APRData
 {
   public:
 
-    RegVal aprValue = 0;
-    bool bubble;
-
-    unsigned int numInsts;
-
-    ThreadID threadId = InvalidThreadID;
+    RegVal aprValue = RegVal(0);
+    bool bubble = true;
 
     bool isBubble() const { return bubble; }
 

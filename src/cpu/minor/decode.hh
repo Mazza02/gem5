@@ -74,7 +74,11 @@ class Decode : public Named
     /** Output port carrying micro-op decomposed instructions to Execute */
     Latch<ForwardInstData>::Input out;
 
-    Latch<APRData>::Output APR_inp;
+    Latch<APRData>::Output APR_out;
+
+    RegVal lastAprResult = 0;
+
+    bool aprActive = false;
 
     /** Interface to reserve space in the next stage */
     std::vector<InputBuffer<ForwardInstData>> &nextStageReserve;
@@ -145,7 +149,7 @@ class Decode : public Named
         const BaseMinorCPUParams &params,
         Latch<ForwardInstData>::Output inp_,
         Latch<ForwardInstData>::Input out_,
-        Latch<APRData>::Output APR_inp_,
+        Latch<APRData>::Output APR_out_,
         std::vector<InputBuffer<ForwardInstData>> &next_stage_input_buffer);
 
   public:
