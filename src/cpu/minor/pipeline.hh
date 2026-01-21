@@ -83,7 +83,7 @@ class Pipeline : public Ticked
     Latch<ForwardInstData> dToE;
     Latch<APRData> EToD;
     Latch<BranchData> eToF1;
-
+    
     Execute execute;
     Decode decode;
     Fetch2 fetch2;
@@ -104,6 +104,8 @@ class Pipeline : public Ticked
         Fetch1StageId, Fetch2StageId, DecodeStageId, ExecuteStageId,
         Num_StageId /* Stage count */
     };
+
+    bool EtoDFlag = false;
 
     /** True after drain is called but draining isn't complete */
     bool needToSignalDrained;

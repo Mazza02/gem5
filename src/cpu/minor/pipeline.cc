@@ -133,7 +133,11 @@ Pipeline::evaluate()
      *  'immediate', 0-time-offset TimeBuffer activity to be visible from
      *  later stages to earlier ones in the same cycle */
     execute.evaluate();
-    EToD.evaluate();
+
+    if(EtoDFlag){
+        EToD.evaluate();
+    }
+    
     decode.evaluate();
     fetch2.evaluate();
     fetch1.evaluate();

@@ -1435,6 +1435,8 @@ Execute::evaluate()
 
     APRData &wire = *APR_inp.inputWire;
 
+    cpu.threads[0]->getTC()->setReg(RiscvISA::zrfloat_reg::Zr1, RegVal(0));
+
     uint64_t APR_val = wire.aprValue;
     if(APR_val != RegVal(0)){
         DPRINTF(zr1Debug, "APR Value: %f\n", (double)APR_val);
@@ -1909,6 +1911,8 @@ Execute::setAPRDatavalue(RegVal val)
 
     DPRINTF(zr1Debug, "Execute stage writing 0x%lx to APR latch\n", val);
     DPRINTF(zr1Debug, "Execute stage APR current value: 0x%lx\n", wire.aprValue);
+
+    cpu.pipeline->EtoDFlag = true;
 }
 
 MinorCPU::MinorCPUPort &
