@@ -83,7 +83,8 @@ Pipeline::Pipeline(MinorCPU &cpu_, const BaseMinorCPUParams &params) :
         std::max(params.fetch1ToFetch2ForwardDelay,
         std::max(params.fetch2ToDecodeForwardDelay,
         std::max(params.decodeToExecuteForwardDelay,
-        params.executeBranchDelay)))),
+        std::max(params.executeToDecodeForwardDelay,
+        params.executeBranchDelay))))),
     needToSignalDrained(false)
 {
     if (params.fetch1ToFetch2ForwardDelay < 1) {
@@ -132,6 +133,7 @@ Pipeline::evaluate()
      *  'immediate', 0-time-offset TimeBuffer activity to be visible from
      *  later stages to earlier ones in the same cycle */
     execute.evaluate();
+    EToD.evaluate();
     decode.evaluate();
     fetch2.evaluate();
     fetch1.evaluate();
@@ -143,8 +145,7 @@ Pipeline::evaluate()
     f1ToF2.evaluate();
     f2ToF1.evaluate();
     f2ToD.evaluate();
-    dToE.evaluate();
-    EToD.evaluate();
+    dToE.evaluate(); 
     eToF1.evaluate();
 
     /* The activity recorder must be be called after all the stages and
