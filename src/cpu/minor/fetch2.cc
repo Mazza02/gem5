@@ -242,7 +242,7 @@ Fetch2::evaluate()
 {
 ThreadContext *tc = cpu.getContext(0);
 
-uint64_t zr1_val = tc->getReg(RiscvISA::zrfloat_reg::Zr1);
+uint64_t zr1_val = tc->getReg(gem5::minor::zrfloat_reg::Zr1);
 
 if (zr1_val != 0.0) {
     DPRINTF(zr1Debug, "Fetch 2 accessed zr1: %f\n", (double)zr1_val);

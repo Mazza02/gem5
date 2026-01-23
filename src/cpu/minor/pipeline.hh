@@ -141,6 +141,37 @@ class Pipeline : public Ticked
     MinorActivityRecorder *getActivityRecorder() { return &activityRecorder; }
 };
 
+
+ namespace zrfloat_reg
+{
+
+enum : RegIndex
+{
+    _ZrFt0Idx,
+    _ZrFt1Idx,
+    NumRegs
+};
+
+inline constexpr RegClass zrFloatRegClass(ZrFloatRegClass, ZrFloatRegClassName,
+        zrfloat_reg::NumRegs, debug::FloatRegs);
+
+}
+
+namespace zrfloat_reg
+{
+
+inline constexpr RegId
+    Zr0 = zrFloatRegClass[_ZrFt0Idx],
+    Zr1 = zrFloatRegClass[_ZrFt1Idx];
+
+const std::vector<std::string> RegNames = {
+    "zr0", "zr1"
+};
+
+
+
+} // namespace zrfloat_reg
+
 } // namespace minor
 } // namespace gem5
 

@@ -1432,7 +1432,7 @@ Execute::evaluate()
     unsigned int num_issued = 0;
 
     ThreadContext *tc = cpu.getContext(0);
-    uint64_t zr1_val = tc->getReg(RiscvISA::zrfloat_reg::Zr1);
+    uint64_t zr1_val = tc->getReg(gem5::minor::zrfloat_reg::Zr1);
     if (zr1_val != 0.0) {
     DPRINTF(zr1Debug, "Execute accessed zr1: %f\n", (double)zr1_val);
     }

@@ -93,8 +93,8 @@ def operands {{
     'Fc2_bits': FloatRegOp('ud', 'FC2', 'IsFloating', 2),
     'Fp2': FloatRegOp('df', 'FP2 + 8', 'IsFloating', 2),
     'Fp2_bits': FloatRegOp('ud', 'FP2 + 8', 'IsFloating', 2),
-    'Zrf': FloatRegOp('df', 'RiscvISA::zrfloat_reg::_ZrFt1Idx', 'IsFloating', 20),
-    'Zrf_bits': FloatRegOp('ud', 'RiscvISA::zrfloat_reg::_ZrFt1Idx', 'IsFloating', 20),
+    'Zrf': FloatRegOp('df', 'zrfloat_reg::_ZrFt1Idx', 'IsFloating', 20),
+    'Zrf_bits': FloatRegOp('ud', 'zrfloat_reg::_ZrFt1Idx', 'IsFloating', 20),
 
     'Vd':  VecRegOp('vc', 'VD', 'IsVector', 1),
     'Vs1': VecRegOp('vc', 'VS1', 'IsVector', 2),
