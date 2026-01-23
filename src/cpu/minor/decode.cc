@@ -169,21 +169,19 @@ if(!wire_in.isBubble()){
     wire_in.bubble = true;
     aprActive = true;
     lastAprResult = wire_in.aprValue;
-    inst->aprValue = lastAprResult;
-    inst->hasAprBypass = true;
     DPRINTF(zr1Debug, "Decode seeing arrived APR Value in BUBBLE: 0x%lx\n", wire_in.aprValue);
 }
 
 
+// I know this doesn't work but I didn't want to leave a segmentation fault in..
+if (!inst->isBubble() && inst->staticInst->getName() == "rfmac_s" ) {
+    DPRINTF(zr1Debug, "Decode seeing arrived APR Value: 0x%lx\n", wire_in.aprValue);
+    DPRINTF(zr1Debug, "Decode seeing CPU variable Value: 0x%lx\n", lastAprResult);
+            inst->aprValue = lastAprResult;
+            inst->hasAprBypass = true;
 
-// if (!inst->isBubble() && inst->staticInst->getName() == "rfmac_s" ) {
-//     DPRINTF(zr1Debug, "Decode seeing arrived APR Value: 0x%lx\n", wire_in.aprValue);
-//     DPRINTF(zr1Debug, "Decode seeing CPU variable Value: 0x%lx\n", lastAprResult);
-//             inst->aprValue = lastAprResult;
-//             inst->hasAprBypass = true;
-
-//             DPRINTF(zr1Debug, "Decode seeing arrived APR Value after: 0x%lx\n", wire_in.aprValue);
-//         }
+            DPRINTF(zr1Debug, "Decode seeing arrived APR Value after: 0x%lx\n", wire_in.aprValue);
+        }
 
             if (inst->isBubble()) {
                 /* Skip */
@@ -195,19 +193,20 @@ if(!wire_in.isBubble()){
                 StaticInstPtr parent_static_inst = NULL;
                 MinorDynInstPtr output_inst = inst;
 
-    // Definitely not the way to assigning a bypass..
-                if (aprActive) {
-    inst->aprValue = lastAprResult;
-    if (static_inst->numSrcRegs() > 0 && 
-       (static_inst->getName() == "c_ldsp")) {
+// DPRINTF(zr1Debug, "instruction_name in decode: %s\n", 
+//                 static_inst->getName());
+//     if (aprActive) {
+//         inst->aprValue = lastAprResult;
+//         inst->hasAprBypass = true;
         
-        inst->hasAprBypass = true;
-        //aprActive = false;
-        DPRINTF(zr1Debug, "Applying APR Bypass to: %s\n", static_inst->getName());
-    } else {
-        inst->hasAprBypass = false;
-    }
-}
+//     } else {
+//         DPRINTF(zr1Debug, "Skipping bypass for instruction: %s\n", 
+//                 static_inst->getName());
+//         inst->hasAprBypass = false;
+//     }
+
+
+
                 
 
                 if (inst->isFault()) {

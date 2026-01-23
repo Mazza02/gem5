@@ -152,7 +152,7 @@ class ExecContext : public gem5::ExecContext
         if (reg.is(InvalidRegClass))
             return 0;
         //hasAprBypass causes segfault if changed to destRegIdx...
-        if (si->srcRegIdx(idx).index() == RiscvISA::zrfloat_reg::_ZrFt1Idx){
+        if (reg.index() == RiscvISA::zrfloat_reg::_ZrFt1Idx ){
             DPRINTF(zr1Debug, "Execute context: Stamped APR value 0x%lx\n", inst->aprValue);
             DPRINTF(zr1Debug, "Execute context: Consent: %s\n", inst->hasAprBypass ? "true" : "false");
             DPRINTF(zr1Debug, "name: 0x%s\n", const_cast<StaticInst*>(si)->getName());
@@ -163,8 +163,7 @@ if (inst->hasAprBypass) {
         return inst->aprValue;
     }
         }
-        
-
+    DPRINTF(zr1Debug, "name normal reg: 0x%s\n", const_cast<StaticInst*>(si)->getName());
         return thread.getReg(reg);
     }
 
@@ -190,6 +189,7 @@ if (inst->hasAprBypass) {
             execute.setAPRDatavalue(val);
             DPRINTF(zr1Debug, "Setting APRData value to: 0x%lx\n", val);
         }
+        DPRINTF(zr1Debug, "Setting reg value to: 0x%lx\n", val);
         thread.setReg(si->destRegIdx(idx), val);
     }
 
