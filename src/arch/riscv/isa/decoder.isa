@@ -3877,6 +3877,12 @@ decode QUADRANT default Unknown::unknown() {
                             Vs1_vwi, Vs2_vi);
                     }}, OPIVV, SimdReduceAddOp);
                 }
+                format VectorFloatFormat{
+                0x34: vrfsmac_vf({{
+                    Vd_vu[i] = Zrvf_vu[0];
+                    Zrvf_vu[i] = boxF32(0);
+                    }}, OPFVF, SimdAddOp);
+                }
                 format VectorIntMaskFormat {
                     0x11: decode VM {
                         0x0: vmadc_vvm({{
@@ -5503,6 +5509,13 @@ decode QUADRANT default Unknown::unknown() {
                                            ftype_freg<et>(freg(Fs1_bits)));
                         Vd_vu[i] = fd.v;
                     }}, OPFVF, SimdFloatMultOp);
+                    
+                    0x26: vrfmac_vf({{
+                        auto fd = fmadd<et>(ftype_freg<et>(freg(Fs1_bits)),
+                                            ftype<et>(Vs2_vu[i]),
+                                            ftype<et>(Zrvf_vu[i]));
+                        Zrvf_vu[i] = fd.v;
+                    }}, OPFVF, SimdFloatMultAccOp);
                     0x27: vfrsub_vf({{
                         auto fd = fsub<et>(ftype_freg<et>(freg(Fs1_bits)),
                                            ftype<et>(Vs2_vu[i]));

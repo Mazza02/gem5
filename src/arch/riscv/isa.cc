@@ -312,6 +312,7 @@ ISA::ISA(const Params &p) : BaseISA(p, "riscv"),
     _regClasses.push_back(&ccRegClass);
     _regClasses.push_back(&miscRegClass);
     _regClasses.push_back(&zrfloat_reg::zrFloatRegClass);
+    _regClasses.push_back(&zrvfloat_reg::zrvFloatRegClass);
 
     fatal_if( p.vlen < p.elen,
     "VLEN should be greater or equal",

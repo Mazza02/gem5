@@ -68,6 +68,7 @@ enum RegClassType
     MatRegClass,        ///< Matrix Register
     CCRegClass,         ///< Condition-code register
     ZrFloatRegClass,
+    ZrvFloatRegClass,
     MiscRegClass,       ///< Control (misc) register
     InvalidRegClass = -1
 };
@@ -76,6 +77,7 @@ enum RegClassType
 inline constexpr char IntRegClassName[] = "integer";
 inline constexpr char FloatRegClassName[] = "floating_point";
 inline constexpr char ZrFloatRegClassName[] = "hidden_floating_point";
+inline constexpr char ZrvFloatRegClassName[] = "hidden_vector_register";
 inline constexpr char VecRegClassName[] = "vector";
 inline constexpr char VecElemClassName[] = "vector_element";
 inline constexpr char VecPredRegClassName[] = "vector_predicate";
