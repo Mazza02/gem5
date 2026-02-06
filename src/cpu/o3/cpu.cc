@@ -90,6 +90,7 @@ CPU::CPU(const BaseO3CPUParams &params)
               params.numPhysFloatRegs,
               params.numPhysVecRegs,
               params.numPhysVecPredRegs,
+              params.numPhysHiddenZrVecRegs,
               params.numPhysMatRegs,
               params.numPhysCCRegs,
               params.isa[0]->regClasses()),

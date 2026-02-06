@@ -351,6 +351,11 @@ ISA::copyRegsFrom(ThreadContext *src)
         tc->setReg(id, &vc);
     }
 
+    for (auto &id: zrvfloat_reg::zrvFloatRegClass) {
+        src->getReg(id, &vc);
+        tc->setReg(id, &vc);
+    }
+
     // Copying Misc Regs
     for (int i = 0; i < NUM_PHYS_MISCREGS; i++)
         tc->setMiscRegNoEffect(i, src->readMiscRegNoEffect(i));

@@ -95,7 +95,7 @@ enum : RegIndex
 };
 
 inline constexpr RegClass zrvFloatRegClass =
-    RegClass(VecRegClass, ZrvFloatRegClassName, zrvfloat_reg::NumRegs, debug::VecRegs).
+    RegClass(ZrvFloatRegClass, ZrvFloatRegClassName, zrvfloat_reg::NumRegs, debug::VecRegs).
         ops(vecRegClassOps).
         regType<VecRegContainer>();
 }

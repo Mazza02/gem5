@@ -3879,9 +3879,14 @@ decode QUADRANT default Unknown::unknown() {
                 }
                 format VectorFloatFormat{
                 0x34: vrfsmac_vf({{
-                    Vd_vu[i] = Zrvf_vu[0];
-                    Zrvf_vu[i] = boxF32(0);
-                    }}, OPFVF, SimdAddOp);
+    for (int x = 0; x < 5; ++x) {
+        printf("Final Accumulator Zrvf_vu[%d]: 0x%08x\n", x, (unsigned int)Zrvf_vu[x]);
+        if (x == 0) {
+            Vd_vu[0] = Zrvf_vu[0];
+        }
+        Zrvf_vu[x] = boxF32(0);
+    }
+}}, OPFVF, SimdAddOp);
                 }
                 format VectorIntMaskFormat {
                     0x11: decode VM {
@@ -5511,9 +5516,16 @@ decode QUADRANT default Unknown::unknown() {
                     }}, OPFVF, SimdFloatMultOp);
                     
                     0x26: vrfmac_vf({{
+                        if ((Zrvf_vu[i] & 0x7F800000) == 0x7F800000) {
+                            Zrvf_vu[i] = 0; // Force to 0.0
+                            }
+                        auto acc_val = Zrvf_vu[i];
+
+                        printf("before: fd.v: 0x%08x | vs2: 0x%08x | fs1: 0x%08x\n", (unsigned int)acc_val, (unsigned int)Vs2_vu[i], (unsigned int)Fs1_bits);
                         auto fd = fmadd<et>(ftype_freg<et>(freg(Fs1_bits)),
                                             ftype<et>(Vs2_vu[i]),
-                                            ftype<et>(Zrvf_vu[i]));
+                                            ftype<et>(acc_val));
+                        printf("after: fd.v: 0x%08x | vs2: 0x%08x | fs1: 0x%08x\n", (unsigned int)fd.v, (unsigned int)Vs2_vu[i], (unsigned int)Fs1_bits);
                         Zrvf_vu[i] = fd.v;
                     }}, OPFVF, SimdFloatMultAccOp);
                     0x27: vfrsub_vf({{
