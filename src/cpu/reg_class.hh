@@ -65,10 +65,10 @@ enum RegClassType
     /** Vector Register Native Elem lane. */
     VecElemClass,
     VecPredRegClass,
+    ZrvFloatRegClass,
     MatRegClass,        ///< Matrix Register
     CCRegClass,         ///< Condition-code register
     ZrFloatRegClass,
-    ZrvFloatRegClass,
     MiscRegClass,       ///< Control (misc) register
     InvalidRegClass = -1
 };

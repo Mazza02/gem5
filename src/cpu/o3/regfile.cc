@@ -117,17 +117,17 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
                 flat_reg_idx++);
     }
 
-    // The next batch of the registers are the hidden zero vector element physical
-    // registers; put them onto the hidden zero vector element free list.
-    for (phys_reg = 0; phys_reg < numPhysicalHiddenZrVecRegs; phys_reg++) {
-        hiddenZrVecRegIds.emplace_back(*reg_classes.at(ZrvFloatRegClass), phys_reg,
-                flat_reg_idx++);
-    }
-
     // The next batch of the registers are the predicate physical
     // registers; put them onto the predicate free list.
     for (phys_reg = 0; phys_reg < numPhysicalVecPredRegs; phys_reg++) {
         vecPredRegIds.emplace_back(*reg_classes.at(VecPredRegClass), phys_reg,
+                flat_reg_idx++);
+    }
+
+    // The next batch of the registers are the hidden zero vector element physical
+    // registers; put them onto the hidden zero vector element free list.
+    for (phys_reg = 0; phys_reg < numPhysicalHiddenZrVecRegs; phys_reg++) {
+        hiddenZrVecRegIds.emplace_back(*reg_classes.at(ZrvFloatRegClass), phys_reg,
                 flat_reg_idx++);
     }
 
@@ -194,7 +194,6 @@ PhysRegFile::initFreeList(UnifiedFreeList *freeList)
     // registers; put them onto the hidden zero vector element free list.
     for (reg_idx = 0; reg_idx < numPhysicalHiddenZrVecRegs; reg_idx++) {
         assert(hiddenZrVecRegIds[reg_idx].index() == reg_idx);
-        hiddenZrVecRegFile.reg(reg_idx) = 0;
     }
     freeList->addRegs(hiddenZrVecRegIds.begin(), hiddenZrVecRegIds.end());
 

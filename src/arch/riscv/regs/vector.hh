@@ -85,12 +85,9 @@ EndBitUnion(VTYPE)
  namespace zrvfloat_reg
 {
 
-using vreg_t = VecRegContainer;
-
 enum : RegIndex
 {
     _ZrvFt0Idx,
-    _ZrvFt1Idx,
     NumRegs
 };
 
