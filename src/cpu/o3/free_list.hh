@@ -97,6 +97,7 @@ class SimpleFreeList
         assert(!freeRegs.empty());
         PhysRegIdPtr free_reg = freeRegs.front();
         if(free_reg->is(ZrvFloatRegClass)){
+            free_reg = freeRegs.back();
             return free_reg;
         }
         freeRegs.pop();

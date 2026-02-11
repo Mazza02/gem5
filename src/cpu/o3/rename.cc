@@ -51,6 +51,7 @@
 #include "debug/O3PipeView.hh"
 #include "debug/Rename.hh"
 #include "params/BaseO3CPU.hh"
+#include "debug/zr1Debug.hh"
 
 namespace gem5
 {
@@ -1052,6 +1053,13 @@ Rename::renameSrcRegs(const DynInstPtr &inst, ThreadID tid)
           case VecPredRegClass:
             stats.vecPredLookups++;
             break;
+        case ZrvFloatRegClass:
+            DPRINTF(Rename, "[tid:%i] Looking up %s arch reg %i, got phys reg %i (%s)\n",
+                    tid, flat_reg.className(),
+                    src_reg.index(), renamed_reg->index(),
+                    renamed_reg->className());
+             stats.fpZrvLookups++;
+             break;
           case MatRegClass:
             stats.matLookups++;
             break;
@@ -1114,6 +1122,13 @@ Rename::renameDestRegs(const DynInstPtr &inst, ThreadID tid)
         inst->flattenedDestIdx(dest_idx, flat_dest_regid);
 
         scoreboard->unsetReg(rename_result.first);
+
+        if(dest_reg.classValue() == ZrvFloatRegClass){
+            DPRINTF(zr1Debug, "[tid:%i] Renaming %s arch reg %i to phys reg %i (%s)\n",
+                    tid, dest_reg.className(),
+                    dest_reg.index(), rename_result.first->index(),
+                    rename_result.first->className());
+        }
 
         DPRINTF(Rename,
                 "[tid:%i] "

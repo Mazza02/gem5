@@ -88,12 +88,15 @@ EndBitUnion(VTYPE)
 enum : RegIndex
 {
     _ZrvFt0Idx,
+    _ZrvFt1Idx,
     NumRegs
 };
 
+static inline TypedRegClassOps<RiscvISA::VecRegContainer> zrvFloatRegClassOps;
+
 inline constexpr RegClass zrvFloatRegClass =
     RegClass(ZrvFloatRegClass, ZrvFloatRegClassName, zrvfloat_reg::NumRegs, debug::VecRegs).
-        ops(vecRegClassOps).
+        ops(zrvFloatRegClassOps).
         regType<VecRegContainer>();
 }
 

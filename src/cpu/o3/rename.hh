@@ -524,6 +524,7 @@ class Rename
         statistics::Scalar fpLookups;
         statistics::Scalar vecLookups;
         statistics::Scalar vecPredLookups;
+        statistics::Scalar fpZrvLookups;
         statistics::Scalar matLookups;
         /** Stat for total number of committed renaming mappings. */
         statistics::Scalar committedMaps;

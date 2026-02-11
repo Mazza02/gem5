@@ -46,6 +46,7 @@
 #include "cpu/o3/dyn_inst.hh"
 #include "cpu/reg_class.hh"
 #include "debug/Rename.hh"
+#include "debug/zr1Debug.hh"
 
 namespace gem5
 {

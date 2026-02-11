@@ -214,6 +214,11 @@ CPU::CPU(const BaseO3CPUParams &params)
             regClasses.at(VecPredRegClass)->numRegs() != 0,
             "Not enough physical registers, consider increasing "
             "numPhysVecPredRegs\n");
+    panic_if(params.numPhysHiddenZrVecRegs <=
+            numThreads * regClasses.at(ZrvFloatRegClass)->numRegs() &&
+            regClasses.at(ZrvFloatRegClass)->numRegs() != 0,
+            "Not enough physical registers, consider increasing "
+            "numPhysHiddenZrVecRegs\n");
     panic_if(params.numPhysMatRegs <=
             numThreads * regClasses.at(MatRegClass)->numRegs() &&
             regClasses.at(MatRegClass)->numRegs() != 0,

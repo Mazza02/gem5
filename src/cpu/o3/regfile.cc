@@ -60,9 +60,9 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
     : intRegFile(*reg_classes.at(IntRegClass), _numPhysicalIntRegs),
       floatRegFile(*reg_classes.at(FloatRegClass), _numPhysicalFloatRegs),
       vectorRegFile(*reg_classes.at(VecRegClass), _numPhysicalVecRegs),
-      vectorElemRegFile(*reg_classes.at(VecElemClass), _numPhysicalVecRegs * (
+      vectorElemRegFile(*reg_classes.at(VecElemClass), (_numPhysicalVecRegs * (
                   reg_classes.at(VecElemClass)->numRegs() /
-                  reg_classes.at(VecRegClass)->numRegs())),
+                  reg_classes.at(VecRegClass)->numRegs()))+2),
       vecPredRegFile(*reg_classes.at(VecPredRegClass),
               _numPhysicalVecPredRegs),
         hiddenZrVecRegFile(*reg_classes.at(ZrvFloatRegClass),
@@ -72,9 +72,9 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
       numPhysicalIntRegs(_numPhysicalIntRegs),
       numPhysicalFloatRegs(_numPhysicalFloatRegs),
       numPhysicalVecRegs(_numPhysicalVecRegs),
-      numPhysicalVecElemRegs(_numPhysicalVecRegs * (
+      numPhysicalVecElemRegs((_numPhysicalVecRegs * (
                   reg_classes.at(VecElemClass)->numRegs() /
-                  reg_classes.at(VecRegClass)->numRegs())),
+                  reg_classes.at(VecRegClass)->numRegs()))+2),
       numPhysicalVecPredRegs(_numPhysicalVecPredRegs),
       numPhysicalHiddenZrVecRegs(_numPhysicalHiddenZrVecRegs),
       numPhysicalMatRegs(_numPhysicalMatRegs),
@@ -127,9 +127,11 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
     // The next batch of the registers are the hidden zero vector element physical
     // registers; put them onto the hidden zero vector element free list.
     for (phys_reg = 0; phys_reg < numPhysicalHiddenZrVecRegs; phys_reg++) {
-        hiddenZrVecRegIds.emplace_back(*reg_classes.at(ZrvFloatRegClass), phys_reg,
-                flat_reg_idx++);
-    }
+    hiddenZrVecRegIds.emplace_back(*reg_classes.at(ZrvFloatRegClass), phys_reg, flat_reg_idx++);
+    printf("DEBUG: Created PhysReg with Class: %d, Index: %d\n", 
+            hiddenZrVecRegIds.back().classValue(), 
+            hiddenZrVecRegIds.back().index());
+}
 
     // The next batch of the registers are the matrix physical
     // registers; put them onto the matrix free list.

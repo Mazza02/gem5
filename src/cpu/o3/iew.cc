@@ -57,6 +57,7 @@
 #include "debug/IEW.hh"
 #include "debug/O3PipeView.hh"
 #include "params/BaseO3CPU.hh"
+#include "debug/zr1Debug.hh"
 
 namespace gem5
 {
@@ -1377,7 +1378,6 @@ IEW::writebackInsts()
         // Notify potential listeners that execution is complete for this
         // instruction.
         ppToCommit->notify(inst);
-
         // Some instructions will be sent to commit without having
         // executed because they need commit to handle them.
         // E.g. Strictly ordered loads have not actually executed when they

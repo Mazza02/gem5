@@ -63,6 +63,7 @@
 #include "cpu/static_inst.hh"
 #include "cpu/translation.hh"
 #include "debug/HtmCpu.hh"
+#include "debug/zr1Debug.hh"
 
 namespace gem5
 {
@@ -1138,6 +1139,10 @@ class DynInst : public ExecContext, public RefCounted
         const PhysRegIdPtr reg = renamedSrcIdx(idx);
         if (reg->is(InvalidRegClass))
             return;
+        if (reg->is(ZrvFloatRegClass)){
+            DPRINTF(zr1Debug, "O3: getRegOperand: reg %d is a ZRV float reg\n", reg->index());
+            //cpu->setReg(reg, val, threadNumber);
+        }
         cpu->getReg(reg, val, threadNumber);
     }
 

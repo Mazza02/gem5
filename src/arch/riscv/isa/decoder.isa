@@ -3879,8 +3879,9 @@ decode QUADRANT default Unknown::unknown() {
                 }
                 format VectorFloatFormat{
                 0x34: vrfsmac_vf({{
+                    printf("before: fd.v: 0x%08x | vs2: 0x%08x | fs1: 0x%08x\n", (unsigned int)Zrvf_vu[i], (unsigned int)Vd_vu[i], (unsigned int)Vs1_vu[i]);
                     printf("vrfsmac here!");
-    Vd_vu[i] = Zrvf_vu[0];
+    Vd_vu[i] = Zrvf_vu[i];
 }}, OPZRSFVF, FloatAddOp);
                 }
                 format VectorIntMaskFormat {
@@ -5511,18 +5512,18 @@ decode QUADRANT default Unknown::unknown() {
                     }}, OPFVF, SimdFloatMultOp);
                     
                     0x26: vrfmac_vf({{
-                        printf("before: fd.v: 0x%08x | vs2: 0x%08x | fs1: 0x%08x\n", (unsigned int)Zrvf_vu[0], (unsigned int)Vs2_vu[i], (unsigned int)Fs1_bits);
-                        if ((Zrvf_vu[0] & 0x7F800000) == 0x7F800000) {
-                            Zrvf_vu[0] = 0; // Force to 0.0
+                        printf("before: fd.v: 0x%08x | vs2: 0x%08x | fs1: 0x%08x\n", (unsigned int)Zrvf_vu[i], (unsigned int)Vs2_vu[i], (unsigned int)Fs1_bits);
+                        if ((Zrvf_vu[i] & 0x7F800000) == 0x7F800000) {
+                            Zrvf_vu[i] = 0; // Force to 0.0
                             }
-                        auto acc_val = Zrvf_vu[0];
+                        auto acc_val = Zrvf_vu[i];
                         
-                        auto fd = fmadd<et>(ftype_freg<et>(freg(Fs1_bits)),
-                                            ftype<et>(Vs2_vu[i]),
+                        auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
+                                            ftype_freg<et>(freg(Fs1_bits)),
                                             ftype<et>(acc_val));
                         printf("after: fd.v: 0x%08x | vs2: 0x%08x | vs2+1: 0x%08x | fs1: 0x%08x\n", (unsigned int)fd.v, (unsigned int)Vs2_vu[i], (unsigned int)Vs2_vu[i+1], (unsigned int)Fs1_bits);
 
-                        Zrvf_vu[0] = fd.v;
+                        Zrvf_vu[i] = fd.v;
                         printf("new instruction!?");
                     }}, OPZRFVF, IsSerializeAfter, SimdFloatMultAccOp);
                     0x27: vfrsub_vf({{
