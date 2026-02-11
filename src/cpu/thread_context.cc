@@ -102,19 +102,6 @@ ThreadContext::compare(ThreadContext *one, ThreadContext *two)
         }
     }
 
-    const auto *hidden_vec_class = regClasses.at(ZrvFloatRegClass);
-    std::vector<uint8_t> hiddenvec1(hidden_vec_class->regBytes());
-    std::vector<uint8_t> hiddenvec2(hidden_vec_class->regBytes());
-    for (auto &id: *regClasses.at(ZrvFloatRegClass)) {
-        one->getReg(id, hiddenvec1.data());
-        two->getReg(id, hiddenvec2.data());
-        if (hiddenvec1 != hiddenvec2) {
-            panic("Vec reg idx %d doesn't match, one: %#x, two: %#x",
-                  id.index(), hidden_vec_class->valString(hiddenvec1.data()),
-                  hidden_vec_class->valString(hiddenvec2.data()));
-        }
-    }
-
     // Then loop through the predicate registers.
     const auto *vec_pred_class = regClasses.at(VecPredRegClass);
     std::vector<uint8_t> pred1(vec_pred_class->regBytes());
@@ -126,6 +113,19 @@ ThreadContext::compare(ThreadContext *one, ThreadContext *two)
             panic("Pred reg idx %d doesn't match, one: %s, two: %s",
                   id.index(), vec_pred_class->valString(pred1.data()),
                   vec_pred_class->valString(pred2.data()));
+        }
+    }
+
+    const auto *hidden_vec_class = regClasses.at(ZrvFloatRegClass);
+    std::vector<uint8_t> hiddenvec1(hidden_vec_class->regBytes());
+    std::vector<uint8_t> hiddenvec2(hidden_vec_class->regBytes());
+    for (auto &id: *regClasses.at(ZrvFloatRegClass)) {
+        one->getReg(id, hiddenvec1.data());
+        two->getReg(id, hiddenvec2.data());
+        if (hiddenvec1 != hiddenvec2) {
+            panic("Vec reg idx %d doesn't match, one: %#x, two: %#x",
+                  id.index(), hidden_vec_class->valString(hiddenvec1.data()),
+                  hidden_vec_class->valString(hiddenvec2.data()));
         }
     }
 
