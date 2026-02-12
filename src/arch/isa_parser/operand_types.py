@@ -381,11 +381,124 @@ class VecRegOperand(RegOperand):
         if self.is_dest:
             self.op_rd = self.makeReadW() + self.op_rd
 
+class ZrVecRegOperand(RegOperand):
+    reg_class = "gem5::RiscvISA::zrvfloat_reg::zrvFloatRegClass"
+
+    def __init__(self, parser, full_name, ext, is_src, is_dest):
+        super().__init__(parser, full_name, ext, is_src, is_dest)
+        self.elemExt = None
+
+    def makeDeclElem(self, elem_op):
+        (elem_name, elem_ext) = elem_op
+        (elem_spec, dflt_elem_ext) = self.elems[elem_name]
+        if elem_ext:
+            ext = elem_ext
+        else:
+            ext = dflt_elem_ext
+        ctype = self.parser.operandTypeMap[ext]
+        return f"\n\t{ctype} {elem_name} = 0;"
+
+    def makeDecl(self):
+        if not self.is_dest and self.is_src:
+            c_decl = f"\t/* Vars for {self.base_name}*/"
+            if hasattr(self, "active_elems"):
+                if self.active_elems:
+                    for elem in self.active_elems:
+                        c_decl += self.makeDeclElem(elem)
+            return c_decl + f"\t/* End vars for {self.base_name} */\n"
+        else:
+            return ""
+
+    # Read destination register to write
+    def makeReadWElem(self, elem_op):
+        (elem_name, elem_ext) = elem_op
+        (elem_spec, dflt_elem_ext) = self.elems[elem_name]
+        if elem_ext:
+            ext = elem_ext
+        else:
+            ext = dflt_elem_ext
+        ctype = self.parser.operandTypeMap[ext]
+        c_read = f"\t\t{ctype}& {elem_name} = {self.base_name}[{elem_spec}];\n"
+        return c_read
+
+    def makeReadW(self):
+        tmp_name = f"tmp_d{self.dest_reg_idx}"
+        c_readw = (
+            f"\t\tauto &{tmp_name} = \n"
+            f"\t\t    *({self.parser.namespace}::VecRegContainer *)\n"
+            f"\t\t    xc->getWritableRegOperand(\n"
+            f"\t\t        this, {self.dest_reg_idx});\n"
+        )
+        if self.elemExt:
+            ext = f"{self.parser.operandTypeMap[self.elemExt]}"
+            c_readw += f"\t\tauto {self.base_name} = {tmp_name}.as<{ext}>();\n"
+        if self.ext:
+            ext = f"{self.parser.operandTypeMap[self.ext]}"
+            c_readw += f"\t\tauto {self.base_name} = {tmp_name}.as<{ext}>();\n"
+        if hasattr(self, "active_elems"):
+            if self.active_elems:
+                for elem in self.active_elems:
+                    c_readw += self.makeReadWElem(elem)
+        return c_readw
+
+    # Normal source operand read
+    def makeReadElem(self, elem_op, name):
+        (elem_name, elem_ext) = elem_op
+        (elem_spec, dflt_elem_ext) = self.elems[elem_name]
+
+        if elem_ext:
+            ext = elem_ext
+        else:
+            ext = dflt_elem_ext
+        ctype = self.parser.operandTypeMap[ext]
+        c_read = f"\t\t{elem_name} = {name}[{elem_spec}];\n"
+        return c_read
+
+    def makeRead(self):
+        name = self.base_name
+        if self.is_dest and self.is_src:
+            name += "_merger"
+
+        tmp_name = f"tmp_s{self.src_reg_idx}"
+        c_read = (
+            f"\t\t{self.parser.namespace}::VecRegContainer "
+            f"{tmp_name};\n"
+            f"\t\txc->getRegOperand(this, {self.src_reg_idx},\n"
+            f"\t\t    &{tmp_name});\n"
+        )
+        # If the parser has detected that elements are being access, create
+        # the appropriate view
+        if self.elemExt:
+            ext = f"{self.parser.operandTypeMap[self.elemExt]}"
+            c_read += f"\t\tauto {name} = {tmp_name}.as<{ext}>();\n"
+        if self.ext:
+            ext = f"{self.parser.operandTypeMap[self.ext]}"
+            c_read += f"\t\tauto {name} = {tmp_name}.as<{ext}>();\n"
+        if hasattr(self, "active_elems"):
+            if self.active_elems:
+                for elem in self.active_elems:
+                    c_read += self.makeReadElem(elem, name)
+        return c_read
+
+    def makeWrite(self):
+        return f"""
+        if (traceData) {{
+            traceData->setData({self.reg_class}, &tmp_d{self.dest_reg_idx});
+        }}
+        """
+
+    def finalize(self):
+        super().finalize()
+        if self.is_dest:
+            self.op_rd = self.makeReadW() + self.op_rd
 
 class VecRegOperandDesc(RegOperandDesc):
     def __init__(self, *args, **kwargs):
         super().__init__("vecRegClass", VecRegOperand, *args, **kwargs)
 
+class ZrVecRegOperandDesc(RegOperandDesc):
+    def __init__(self, *args, **kwargs):
+        super().__init__("gem5::RiscvISA::zrvfloat_reg::zrvFloatRegClass", ZrVecRegOperand, *args, **kwargs)
 
 class VecPredRegOperand(RegOperand):
     reg_class = "vecPredRegClass"

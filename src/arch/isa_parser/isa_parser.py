@@ -575,6 +575,7 @@ class ISAParser(Grammar):
                 "VecElemOp": VecElemOperandDesc,
                 "VecRegOp": VecRegOperandDesc,
                 "VecPredRegOp": VecPredRegOperandDesc,
+                "ZrVecRegOp": ZrVecRegOperandDesc,
                 "MatRegOp": MatRegOperandDesc,
                 "ControlRegOp": ControlRegOperandDesc,
                 "MemOp": MemOperandDesc,

@@ -230,7 +230,20 @@ inline constexpr RegClass zrFloatRegClass(ZrFloatRegClass, ZrFloatRegClassName,
 
 }
 
+namespace zrfloat_reg
+{
 
+inline constexpr RegId
+    Zr0 = zrFloatRegClass[_ZrFt0Idx],
+    Zr1 = zrFloatRegClass[_ZrFt1Idx];
+
+const std::vector<std::string> RegNames = {
+    "zr0", "zr1"
+};
+
+
+
+} // namespace zrfloat_reg
 
 inline float16_t
 fsgnj16(float16_t a, float16_t b, bool n, bool x) {

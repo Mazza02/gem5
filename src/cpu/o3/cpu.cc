@@ -91,6 +91,7 @@ CPU::CPU(const BaseO3CPUParams &params)
               params.numPhysVecRegs,
               params.numPhysVecPredRegs,
               params.numPhysHiddenZrVecRegs,
+              params.numPhysHiddenZrFloatRegs,
               params.numPhysMatRegs,
               params.numPhysCCRegs,
               params.isa[0]->regClasses()),
@@ -219,6 +220,11 @@ CPU::CPU(const BaseO3CPUParams &params)
             regClasses.at(ZrvFloatRegClass)->numRegs() != 0,
             "Not enough physical registers, consider increasing "
             "numPhysHiddenZrVecRegs\n");
+    panic_if(params.numPhysHiddenZrFloatRegs <=
+            numThreads * regClasses.at(ZrFloatRegClass)->numRegs() &&
+            regClasses.at(ZrFloatRegClass)->numRegs() != 0,
+            "Not enough physical registers, consider increasing "
+            "numPhysHiddenZrFloatRegs\n");
     panic_if(params.numPhysMatRegs <=
             numThreads * regClasses.at(MatRegClass)->numRegs() &&
             regClasses.at(MatRegClass)->numRegs() != 0,

@@ -97,6 +97,10 @@ class SimpleFreeList
         assert(!freeRegs.empty());
         PhysRegIdPtr free_reg = freeRegs.front();
         if(free_reg->is(ZrvFloatRegClass)){
+            free_reg = freeRegs.front();
+            return free_reg;
+        }
+        if(free_reg->is(ZrFloatRegClass)){
             free_reg = freeRegs.back();
             return free_reg;
         }
@@ -133,7 +137,7 @@ class UnifiedFreeList
      *  explicitly because Scoreboard is not a SimObject. */
     const std::string _name;
 
-    std::array<SimpleFreeList, CCRegClass + 2> freeLists;
+    std::array<SimpleFreeList, CCRegClass + 1> freeLists;
 
     /**
      * The register file object is used only to distinguish integer

@@ -96,6 +96,9 @@ class PhysRegFile
     RegFile hiddenZrVecRegFile;
     std::vector<PhysRegId> hiddenZrVecRegIds;
 
+    RegFile zrFloatRegFile;
+    std::vector<PhysRegId> zrFloatRegIds;
+
     /** Matrix register file. */
     RegFile matRegFile;
     std::vector<PhysRegId> matRegIds;
@@ -137,6 +140,8 @@ class PhysRegFile
       */
     unsigned numPhysicalHiddenZrVecRegs;
 
+    unsigned numPhysicalHiddenZrFloatRegs;
+
     /**
      * Number of physical matrix registers
      */
@@ -160,6 +165,7 @@ class PhysRegFile
                 unsigned _numPhysicalVecRegs,
                 unsigned _numPhysicalVecPredRegs,
                 unsigned _numPhysicalHiddenZrVecRegs,
+                unsigned _numPhysicalHiddenZrFloatRegs,
                 unsigned _numPhysicalMatRegs,
                 unsigned _numPhysicalCCRegs,
                 const BaseISA::RegClasses &classes);
@@ -210,6 +216,11 @@ class PhysRegFile
             DPRINTF(zr1Debug, "RegFile: Access to hidden zero vector element register %i "
                     "has data %#x\n", idx, val);
             return val;
+            case ZrFloatRegClass:
+            val = zrFloatRegFile.reg(idx);
+            DPRINTF(zr1Debug, "RegFile: Access to hidden zero floating point register %i "
+                    "has data %#x\n", idx, val);
+            return val;
           case CCRegClass:
             val = ccRegFile.reg(idx);
             DPRINTF(IEW, "RegFile: Access to cc register %i has data %#x\n",
@@ -255,6 +266,11 @@ class PhysRegFile
             DPRINTF(zr1Debug, "RegFile: Access to hidden zero vector element register %i, has "
                     "data %s\n", idx, hiddenZrVecRegFile.regClass.valString(val));
             break;
+          case ZrFloatRegClass:
+            zrFloatRegFile.get(idx, val);
+            DPRINTF(zr1Debug, "RegFile: Access to hidden zero floating point register %i, has "
+                    "data %s\n", idx, zrFloatRegFile.regClass.valString(val));
+            break;
           case MatRegClass:
             matRegFile.get(idx, val);
             DPRINTF(IEW, "RegFile: Access to matrix register %i, has "
@@ -281,6 +297,8 @@ class PhysRegFile
             return vecPredRegFile.ptr(idx);
           case ZrvFloatRegClass:
             return hiddenZrVecRegFile.ptr(idx);
+          case ZrFloatRegClass:
+            return zrFloatRegFile.ptr(idx);
           case MatRegClass:
             return matRegFile.ptr(idx);
           default:
@@ -315,6 +333,11 @@ class PhysRegFile
           case ZrvFloatRegClass:
             hiddenZrVecRegFile.reg(idx) = val;
             DPRINTF(zr1Debug, "RegFile: Setting hidden zero vector element register %i to "
+                    "%#x\n", idx, val);
+            break;
+          case ZrFloatRegClass: 
+            zrFloatRegFile.reg(idx) = val;
+            DPRINTF(zr1Debug, "RegFile: Setting hidden zero floating point register %i to "
                     "%#x\n", idx, val);
             break;
           case CCRegClass:
@@ -358,6 +381,11 @@ class PhysRegFile
                     idx, hiddenZrVecRegFile.regClass.valString(val));
             hiddenZrVecRegFile.set(idx, val);
             break;
+          case ZrFloatRegClass:
+            DPRINTF(zr1Debug, "RegFile: Setting hidden zero floating point register %i to %s\n",
+                    idx, zrFloatRegFile.regClass.valString(val));
+            zrFloatRegFile.set(idx, val);
+             break;
           case MatRegClass:
             DPRINTF(IEW, "RegFile: Setting matrix register %i to %s\n",
                     idx, matRegFile.regClass.valString(val));

@@ -54,6 +54,7 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
                          unsigned _numPhysicalVecRegs,
                          unsigned _numPhysicalVecPredRegs,
                          unsigned _numPhysicalHiddenZrVecRegs,
+                         unsigned _numPhysicalHiddenZrFloatRegs,
                          unsigned _numPhysicalMatRegs,
                          unsigned _numPhysicalCCRegs,
                          const BaseISA::RegClasses &reg_classes)
@@ -62,11 +63,13 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
       vectorRegFile(*reg_classes.at(VecRegClass), _numPhysicalVecRegs),
       vectorElemRegFile(*reg_classes.at(VecElemClass), (_numPhysicalVecRegs * (
                   reg_classes.at(VecElemClass)->numRegs() /
-                  reg_classes.at(VecRegClass)->numRegs()))+2),
+                  reg_classes.at(VecRegClass)->numRegs()))),
       vecPredRegFile(*reg_classes.at(VecPredRegClass),
               _numPhysicalVecPredRegs),
         hiddenZrVecRegFile(*reg_classes.at(ZrvFloatRegClass),
               _numPhysicalHiddenZrVecRegs),
+        zrFloatRegFile(*reg_classes.at(ZrFloatRegClass), 
+        _numPhysicalHiddenZrFloatRegs),
       matRegFile(*reg_classes.at(MatRegClass), _numPhysicalMatRegs),
       ccRegFile(*reg_classes.at(CCRegClass), _numPhysicalCCRegs),
       numPhysicalIntRegs(_numPhysicalIntRegs),
@@ -74,9 +77,10 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
       numPhysicalVecRegs(_numPhysicalVecRegs),
       numPhysicalVecElemRegs((_numPhysicalVecRegs * (
                   reg_classes.at(VecElemClass)->numRegs() /
-                  reg_classes.at(VecRegClass)->numRegs()))+2),
+                  reg_classes.at(VecRegClass)->numRegs()))),
       numPhysicalVecPredRegs(_numPhysicalVecPredRegs),
       numPhysicalHiddenZrVecRegs(_numPhysicalHiddenZrVecRegs),
+      numPhysicalHiddenZrFloatRegs(_numPhysicalHiddenZrFloatRegs),
       numPhysicalMatRegs(_numPhysicalMatRegs),
       numPhysicalCCRegs(_numPhysicalCCRegs),
       totalNumRegs(_numPhysicalIntRegs
@@ -85,6 +89,7 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
                    + numPhysicalVecElemRegs
                    + _numPhysicalVecPredRegs
                      + _numPhysicalHiddenZrVecRegs
+                     + _numPhysicalHiddenZrFloatRegs
                    + _numPhysicalMatRegs
                    + _numPhysicalCCRegs)
 {
@@ -132,6 +137,13 @@ PhysRegFile::PhysRegFile(unsigned _numPhysicalIntRegs,
             hiddenZrVecRegIds.back().classValue(), 
             hiddenZrVecRegIds.back().index());
 }
+
+// The next batch of the registers are the floating-point physical
+    // registers; put them onto the floating-point free list.
+    for (phys_reg = 0; phys_reg < numPhysicalHiddenZrFloatRegs; phys_reg++) {
+        zrFloatRegIds.emplace_back(*reg_classes.at(ZrFloatRegClass),
+                phys_reg, flat_reg_idx++);
+    }
 
     // The next batch of the registers are the matrix physical
     // registers; put them onto the matrix free list.
@@ -198,6 +210,11 @@ PhysRegFile::initFreeList(UnifiedFreeList *freeList)
         assert(hiddenZrVecRegIds[reg_idx].index() == reg_idx);
     }
     freeList->addRegs(hiddenZrVecRegIds.begin(), hiddenZrVecRegIds.end());
+
+    for (reg_idx = 0; reg_idx < numPhysicalHiddenZrFloatRegs; reg_idx++) {
+        assert(zrFloatRegIds[reg_idx].index() == reg_idx);
+    }
+    freeList->addRegs(zrFloatRegIds.begin(), zrFloatRegIds.end());
 
     /* The next batch of the registers are the matrix physical
      * registers; put them onto the matrix free list. */

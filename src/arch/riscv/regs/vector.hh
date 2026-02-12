@@ -63,6 +63,10 @@ const std::vector<std::string> VecRegNames = {
     "vtmp0", "vtmp1", "vtmp2", "vtmp3", "vtmp4", "vtmp5", "vtmp6", "vtmp7"
 };
 
+const std::vector<std::string> ZrVecRegNames = {
+    "zr0",   "zr1"
+};
+
 // vector index
 const int VecMemInternalReg0 = NumVecStandardRegs;
 
@@ -98,6 +102,15 @@ inline constexpr RegClass zrvFloatRegClass =
     RegClass(ZrvFloatRegClass, ZrvFloatRegClassName, zrvfloat_reg::NumRegs, debug::VecRegs).
         ops(zrvFloatRegClassOps).
         regType<VecRegContainer>();
+
+BitUnion64(VTYPE)
+    Bitfield<63> vill;
+    Bitfield<7, 0> vtype8;
+    Bitfield<7> vma;
+    Bitfield<6> vta;
+    Bitfield<5, 3> vsew;
+    Bitfield<2, 0> vlmul;
+EndBitUnion(VTYPE)
 }
 
 } // namespace RiscvISA

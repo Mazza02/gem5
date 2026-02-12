@@ -5512,18 +5512,38 @@ decode QUADRANT default Unknown::unknown() {
                     }}, OPFVF, SimdFloatMultOp);
                     
                     0x26: vrfmac_vf({{
-                        printf("before: fd.v: 0x%08x | vs2: 0x%08x | fs1: 0x%08x\n", (unsigned int)Zrvf_vu[i], (unsigned int)Vs2_vu[i], (unsigned int)Fs1_bits);
-                        if ((Zrvf_vu[i] & 0x7F800000) == 0x7F800000) {
-                            Zrvf_vu[i] = 0; // Force to 0.0
-                            }
-                        auto acc_val = Zrvf_vu[i];
+
+                        std::string disasm = this->disassemble(0);
+    Addr pc = xc->pcState().instAddr();
+    
+    printf("[PC: 0x%lx] Executing: %s\n", pc, disasm.c_str());
+
+    auto srcReg = this->srcRegIdx(2);
+auto destReg = this->destRegIdx(0);
+
+printf("  READING PHYS_REG: P%d (Class: %d)\n", srcReg.index(), (int)srcReg.classValue());
+printf("  WRITING PHYS_REG: P%d (Class: %d)\n", destReg.index(), (int)destReg.classValue());
+
+  //  printf("Full Zrvf_vu contents: [");
+  //  for (int j = 0; j < 255; ++j) { 
+  //      printf("%08x%s", (unsigned int)Zrvf_vu[j], (j == 31 ? "" : "_"));
+ //   }
+  //  printf("]\n");
+    
+                        
+                     //   if ((Zrf_bits & 0x7F800000) == 0x7F800000) {
+                     //       Zrf_bits = 0; // Force to 0.0
+                     //       }
+                        auto acc_val = boxF32(Zrf_bits);
+
+                        printf("before: fd.v: 0x%08x | vs2: 0x%08x | fs1: 0x%08x\n", (unsigned int)acc_val, (unsigned int)Vs2_vu[i], (unsigned int)Fs1_bits);
                         
                         auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
                                             ftype_freg<et>(freg(Fs1_bits)),
-                                            ftype<et>(acc_val));
+                                            ftype_freg<et>(freg(acc_val)));
                         printf("after: fd.v: 0x%08x | vs2: 0x%08x | vs2+1: 0x%08x | fs1: 0x%08x\n", (unsigned int)fd.v, (unsigned int)Vs2_vu[i], (unsigned int)Vs2_vu[i+1], (unsigned int)Fs1_bits);
 
-                        Zrvf_vu[i] = fd.v;
+                        Zrf_bits = fd.v;
                         printf("new instruction!?");
                     }}, OPZRFVF, IsSerializeAfter, SimdFloatMultAccOp);
                     0x27: vfrsub_vf({{

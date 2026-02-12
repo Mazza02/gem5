@@ -1060,6 +1060,13 @@ Rename::renameSrcRegs(const DynInstPtr &inst, ThreadID tid)
                     renamed_reg->className());
              stats.fpZrvLookups++;
              break;
+        case ZrFloatRegClass:
+            DPRINTF(Rename, "[tid:%i] Looking up %s arch reg %i, got phys reg %i (%s)\n",
+                    tid, flat_reg.className(),
+                    src_reg.index(), renamed_reg->index(),
+                    renamed_reg->className());
+             stats.fpZrvLookups++;
+             break;
           case MatRegClass:
             stats.matLookups++;
             break;

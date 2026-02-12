@@ -159,6 +159,13 @@ registerName(RegId reg)
             return str.str();
         }
         return VecRegNames[reg.index()];
+    } else if (reg.is(ZrvFloatRegClass)) {
+        if (reg.index() >= NumVecRegs) {
+            std::stringstream str;
+            str << "?? (zr" << reg.index() << ')';
+            return str.str();
+        }
+        return ZrVecRegNames[reg.index()];
     } else  {
         /* It must be an InvalidRegClass, in RISC-V we should treat it as a
          * zero register for the disassembler to work correctly.

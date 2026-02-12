@@ -309,10 +309,10 @@ ISA::ISA(const Params &p) : BaseISA(p, "riscv"),
     _regClasses.push_back(&vecElemClass);
     _regClasses.push_back(&vecPredRegClass);
     _regClasses.push_back(&zrvfloat_reg::zrvFloatRegClass);
+    _regClasses.push_back(&zrfloat_reg::zrFloatRegClass);
     _regClasses.push_back(&matRegClass);
     _regClasses.push_back(&ccRegClass);
     _regClasses.push_back(&miscRegClass);
-    _regClasses.push_back(&zrfloat_reg::zrFloatRegClass);
 
     fatal_if( p.vlen < p.elen,
     "VLEN should be greater or equal",
@@ -341,9 +341,6 @@ ISA::copyRegsFrom(ThreadContext *src)
     for (auto &id: floatRegClass)
         tc->setReg(id, src->getReg(id));
 
-    for (auto &id: zrfloat_reg::zrFloatRegClass)
-        tc->setReg(id, src->getReg(id));
-
     // Fourth loop through the vector registers.
     RiscvISA::VecRegContainer vc;
     for (auto &id: vecRegClass) {
@@ -355,6 +352,9 @@ ISA::copyRegsFrom(ThreadContext *src)
         src->getReg(id, &vc);
         tc->setReg(id, &vc);
     }
+
+    for (auto &id: zrfloat_reg::zrFloatRegClass)
+        tc->setReg(id, src->getReg(id));
 
     // Copying Misc Regs
     for (int i = 0; i < NUM_PHYS_MISCREGS; i++)
