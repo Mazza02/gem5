@@ -262,12 +262,18 @@ class PhysRegFile
                     "data %s\n", idx, vecPredRegFile.regClass.valString(val));
             break;
           case ZrvFloatRegClass:
-            hiddenZrVecRegFile.get(idx, val);
-            DPRINTF(zr1Debug, "RegFile: Access to hidden zero vector element register %i, has "
-                    "data %s\n", idx, hiddenZrVecRegFile.regClass.valString(val));
-            break;
+            {
+    hiddenZrVecRegFile.get(idx, val);
+    const uint32_t* dataPtr = reinterpret_cast<const uint32_t*>(val);
+    
+    DPRINTF(zr1Debug, "RegFile: Access ZRV %i | First 5 elements: "
+            "[0]:0x%08x [1]:0x%08x [2]:0x%08x [3]:0x%08x [4]:0x%08x\n",
+            idx, dataPtr[0], dataPtr[1], dataPtr[2], dataPtr[3], dataPtr[4]);
+    break;
+}
           case ZrFloatRegClass:
-            zrFloatRegFile.get(idx, val);
+            //zrFloatRegFile.get(idx, val);
+            *(RegVal *)val = getReg(phys_reg);
             DPRINTF(zr1Debug, "RegFile: Access to hidden zero floating point register %i, has "
                     "data %s\n", idx, zrFloatRegFile.regClass.valString(val));
             break;
@@ -297,8 +303,6 @@ class PhysRegFile
             return vecPredRegFile.ptr(idx);
           case ZrvFloatRegClass:
             return hiddenZrVecRegFile.ptr(idx);
-          case ZrFloatRegClass:
-            return zrFloatRegFile.ptr(idx);
           case MatRegClass:
             return matRegFile.ptr(idx);
           default:
@@ -328,11 +332,6 @@ class PhysRegFile
           case VecElemClass:
             vectorElemRegFile.reg(idx) = val;
             DPRINTF(IEW, "RegFile: Setting vector element register %i to "
-                    "%#x\n", idx, val);
-            break;
-          case ZrvFloatRegClass:
-            hiddenZrVecRegFile.reg(idx) = val;
-            DPRINTF(zr1Debug, "RegFile: Setting hidden zero vector element register %i to "
                     "%#x\n", idx, val);
             break;
           case ZrFloatRegClass: 
@@ -384,7 +383,7 @@ class PhysRegFile
           case ZrFloatRegClass:
             DPRINTF(zr1Debug, "RegFile: Setting hidden zero floating point register %i to %s\n",
                     idx, zrFloatRegFile.regClass.valString(val));
-            zrFloatRegFile.set(idx, val);
+            setReg(phys_reg, *(RegVal *)val);
              break;
           case MatRegClass:
             DPRINTF(IEW, "RegFile: Setting matrix register %i to %s\n",

@@ -80,13 +80,6 @@ ThreadContext::compare(ThreadContext *one, ThreadContext *two)
             panic("Float reg idx %d doesn't match, one: %#x, two: %#x",
                   id.index(), t1, t2);
     }
-    for (auto &id: *regClasses.at(ZrFloatRegClass)) {
-        RegVal t1 = one->getReg(id);
-        RegVal t2 = two->getReg(id);
-        if (t1 != t2)
-            panic("ZrFloat reg idx %d doesn't match, one: %#x, two: %#x",
-                  id.index(), t1, t2);
-    }
 
     // Then loop through the vector registers.
     const auto *vec_class = regClasses.at(VecRegClass);
@@ -127,6 +120,14 @@ ThreadContext::compare(ThreadContext *one, ThreadContext *two)
                   id.index(), hidden_vec_class->valString(hiddenvec1.data()),
                   hidden_vec_class->valString(hiddenvec2.data()));
         }
+    }
+
+    for (auto &id: *regClasses.at(ZrFloatRegClass)) {
+        RegVal t1 = one->getReg(id);
+        RegVal t2 = two->getReg(id);
+        if (t1 != t2)
+            panic("ZrFloat reg idx %d doesn't match, one: %#x, two: %#x",
+                  id.index(), t1, t2);
     }
 
     // Then loop through the matrix registers.

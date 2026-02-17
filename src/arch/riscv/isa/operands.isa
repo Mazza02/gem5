@@ -93,14 +93,14 @@ def operands {{
     'Fc2_bits': FloatRegOp('ud', 'FC2', 'IsFloating', 2),
     'Fp2': FloatRegOp('df', 'FP2 + 8', 'IsFloating', 2),
     'Fp2_bits': FloatRegOp('ud', 'FP2 + 8', 'IsFloating', 2),
-    'Zrf': FloatRegOp('df', 'zrfloat_reg::_ZrFt1Idx', 'IsFloating', 20),
-    'Zrf_bits': FloatRegOp('ud', 'zrfloat_reg::_ZrFt1Idx', 'IsFloating', 20),
+    'Zrf': ZrFloatRegOp('df', '1', 'IsFloating', 4),
+    'Zrf_bits': ZrFloatRegOp('ud', '1', 'IsFloating', 4),
 
     'Vd':  VecRegOp('vc', 'VD', 'IsVector', 1),
     'Vs1': VecRegOp('vc', 'VS1', 'IsVector', 2),
     'Vs2': VecRegOp('vc', 'VS2', 'IsVector', 3),
     'Vs3': VecRegOp('vc', 'VS3', 'IsVector', 4),
-    'Zrvf': ZrVecRegOp('vc', 'gem5::RiscvISA::zrvfloat_reg::zrvFloatRegClass[1]', 'IsVector', 20),
+    'Zrvf': ZrVecRegOp('vc', '1', 'IsVector', 4),
 #Memory Operand
     'Mem': MemOp('ud', None, (None, 'IsLoad', 'IsStore'), 5),
 

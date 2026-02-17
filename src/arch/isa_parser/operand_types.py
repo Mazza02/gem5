@@ -259,6 +259,9 @@ class FloatRegOperandDesc(RegOperandDesc):
     def __init__(self, *args, **kwargs):
         super().__init__("floatRegClass", RegValOperand, *args, **kwargs)
 
+class ZrFloatRegOperandDesc(RegOperandDesc):
+    def __init__(self, *args, **kwargs):
+        super().__init__("zrFloatRegClass", RegValOperand, *args, **kwargs)
 
 class CCRegOperandDesc(RegOperandDesc):
     def __init__(self, *args, **kwargs):
@@ -381,8 +384,16 @@ class VecRegOperand(RegOperand):
         if self.is_dest:
             self.op_rd = self.makeReadW() + self.op_rd
 
+class VecRegOperandDesc(RegOperandDesc):
+    def __init__(self, *args, **kwargs):
+        super().__init__("vecRegClass", VecRegOperand, *args, **kwargs)
+
+class ZrVecRegOperandDesc(RegOperandDesc):
+    def __init__(self, *args, **kwargs):
+        super().__init__("zrvFloatRegClass", ZrVecRegOperand, *args, **kwargs)
+
 class ZrVecRegOperand(RegOperand):
-    reg_class = "gem5::RiscvISA::zrvfloat_reg::zrvFloatRegClass"
+    reg_class = "zrvFloatRegClass"
 
     def __init__(self, parser, full_name, ext, is_src, is_dest):
         super().__init__(parser, full_name, ext, is_src, is_dest)
@@ -491,14 +502,6 @@ class ZrVecRegOperand(RegOperand):
         super().finalize()
         if self.is_dest:
             self.op_rd = self.makeReadW() + self.op_rd
-
-class VecRegOperandDesc(RegOperandDesc):
-    def __init__(self, *args, **kwargs):
-        super().__init__("vecRegClass", VecRegOperand, *args, **kwargs)
-
-class ZrVecRegOperandDesc(RegOperandDesc):
-    def __init__(self, *args, **kwargs):
-        super().__init__("gem5::RiscvISA::zrvfloat_reg::zrvFloatRegClass", ZrVecRegOperand, *args, **kwargs)
 
 class VecPredRegOperand(RegOperand):
     reg_class = "vecPredRegClass"

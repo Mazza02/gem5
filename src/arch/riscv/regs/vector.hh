@@ -86,9 +86,6 @@ BitUnion64(VTYPE)
     Bitfield<2, 0> vlmul;
 EndBitUnion(VTYPE)
 
- namespace zrvfloat_reg
-{
-
 enum : RegIndex
 {
     _ZrvFt0Idx,
@@ -99,19 +96,9 @@ enum : RegIndex
 static inline TypedRegClassOps<RiscvISA::VecRegContainer> zrvFloatRegClassOps;
 
 inline constexpr RegClass zrvFloatRegClass =
-    RegClass(ZrvFloatRegClass, ZrvFloatRegClassName, zrvfloat_reg::NumRegs, debug::VecRegs).
+    RegClass(ZrvFloatRegClass, ZrvFloatRegClassName, NumRegs, debug::VecRegs).
         ops(zrvFloatRegClassOps).
         regType<VecRegContainer>();
-
-BitUnion64(VTYPE)
-    Bitfield<63> vill;
-    Bitfield<7, 0> vtype8;
-    Bitfield<7> vma;
-    Bitfield<6> vta;
-    Bitfield<5, 3> vsew;
-    Bitfield<2, 0> vlmul;
-EndBitUnion(VTYPE)
-}
 
 } // namespace RiscvISA
 } // namespace gem5

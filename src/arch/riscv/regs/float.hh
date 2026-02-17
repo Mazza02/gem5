@@ -225,11 +225,10 @@ enum : RegIndex
     NumRegs
 };
 
-inline constexpr RegClass zrFloatRegClass(ZrFloatRegClass, ZrFloatRegClassName,
-        zrfloat_reg::NumRegs, debug::FloatRegs);
 
 }
-
+inline constexpr RegClass zrFloatRegClass(ZrFloatRegClass, ZrFloatRegClassName,
+        zrfloat_reg::NumRegs, debug::FloatRegs);
 namespace zrfloat_reg
 {
 

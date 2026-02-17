@@ -308,8 +308,8 @@ ISA::ISA(const Params &p) : BaseISA(p, "riscv"),
     _regClasses.push_back(&vecRegClass);
     _regClasses.push_back(&vecElemClass);
     _regClasses.push_back(&vecPredRegClass);
-    _regClasses.push_back(&zrvfloat_reg::zrvFloatRegClass);
-    _regClasses.push_back(&zrfloat_reg::zrFloatRegClass);
+    _regClasses.push_back(&zrvFloatRegClass);
+    _regClasses.push_back(&zrFloatRegClass);
     _regClasses.push_back(&matRegClass);
     _regClasses.push_back(&ccRegClass);
     _regClasses.push_back(&miscRegClass);
@@ -347,13 +347,13 @@ ISA::copyRegsFrom(ThreadContext *src)
         src->getReg(id, &vc);
         tc->setReg(id, &vc);
     }
-
-    for (auto &id: zrvfloat_reg::zrvFloatRegClass) {
-        src->getReg(id, &vc);
-        tc->setReg(id, &vc);
+    RiscvISA::VecRegContainer vc_zr;
+    for (auto &id: zrvFloatRegClass) {
+        src->getReg(id, &vc_zr);
+        tc->setReg(id, &vc_zr);
     }
 
-    for (auto &id: zrfloat_reg::zrFloatRegClass)
+    for (auto &id: zrFloatRegClass)
         tc->setReg(id, src->getReg(id));
 
     // Copying Misc Regs
