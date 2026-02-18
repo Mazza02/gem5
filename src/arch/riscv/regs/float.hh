@@ -221,7 +221,6 @@ const std::vector<std::string> RegNames = {
 enum : RegIndex
 {
     _ZrFt0Idx,
-    _ZrFt1Idx,
     NumRegs
 };
 
@@ -233,11 +232,10 @@ namespace zrfloat_reg
 {
 
 inline constexpr RegId
-    Zr0 = zrFloatRegClass[_ZrFt0Idx],
-    Zr1 = zrFloatRegClass[_ZrFt1Idx];
+    Zr0 = zrFloatRegClass[_ZrFt0Idx];
 
 const std::vector<std::string> RegNames = {
-    "zr0", "zr1"
+    "zr0"
 };
 
 

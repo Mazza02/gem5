@@ -64,7 +64,7 @@ const std::vector<std::string> VecRegNames = {
 };
 
 const std::vector<std::string> ZrVecRegNames = {
-    "zr0",   "zr1"
+    "zr0"
 };
 
 // vector index
@@ -89,7 +89,6 @@ EndBitUnion(VTYPE)
 enum : RegIndex
 {
     _ZrvFt0Idx,
-    _ZrvFt1Idx,
     NumRegs
 };
 

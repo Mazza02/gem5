@@ -3881,21 +3881,16 @@ decode QUADRANT default Unknown::unknown() {
                 0x34: vrfsmac_vf({{
                     auto srcReg = this->srcRegIdx(0);
                     auto srcReg2 = this->srcRegIdx(1);
-                    auto srcReg3 = this->srcRegIdx(2);
 auto destReg = this->destRegIdx(0);
-
 printf("  READING PHYS_REG: P%d (Class: %d)\n", srcReg.index(), (int)srcReg.classValue());
 printf("  READING PHYS_REG: P%d (Class: %d)\n", srcReg2.index(), (int)srcReg2.classValue());
-printf("  READING PHYS_REG: P%d (Class: %d)\n", srcReg3.index(), (int)srcReg3.classValue());
 printf("  WRITING PHYS_REG: P%d (Class: %d)\n", destReg.index(), (int)destReg.classValue());
-printf("  DEBUG: Zrvf_vu Raw: 0x%016llx | As Float: %f\n", 
-            (unsigned long long)(uint64_t)Zrvf_vu[0], 
-            (double)ftype_freg<et>(freg(Zrvf_vu[0])).v);
-    auto filler = Vs2_vu[0];
-    Vd_vu[i] = Zrvf_vu[0];
-    Zrvf_vu[0] = boxF32(0);
+printf("  DEBUG: Zrvfs_vu Raw: 0x%016llx\n", Zrvfs_vu[0]);
+    Vd_vu[i] = Zrvfs_vu[0];
+    //Zrvfs_vu[0] = boxF32(0);
         printf("after: vd.vu: 0x%08x \n", (unsigned int)Vd_vu[i]);
-}}, OPZRSFVF,IsSerializeBefore, IsSerializeAfter, SimdFloatMultAccOp);
+        
+}}, OPZRSFVF, SimdFloatMultAccOp);
                 }
                 format VectorIntMaskFormat {
                     0x11: decode VM {
@@ -5525,43 +5520,24 @@ printf("  DEBUG: Zrvf_vu Raw: 0x%016llx | As Float: %f\n",
                     }}, OPFVF, SimdFloatMultOp);
                     
                     0x26: vrfmac_vf({{
-                        auto srcReg = this->srcRegIdx(0);
-                    auto srcReg2 = this->srcRegIdx(1);
-                    auto srcReg3 = this->srcRegIdx(2);
-auto destReg = this->destRegIdx(0);
-
-printf("  READING PHYS_REG: P%d (Class: %d)\n", srcReg.index(), (int)srcReg.classValue());
-printf("  READING PHYS_REG: P%d (Class: %d)\n", srcReg2.index(), (int)srcReg2.classValue());
-printf("  READING PHYS_REG: P%d (Class: %d)\n", srcReg3.index(), (int)srcReg3.classValue());
-printf("  WRITING PHYS_REG: P%d (Class: %d)\n", destReg.index(), (int)destReg.classValue());
-
-
-
-
-uint64_t acc_val_fregged=0;
-
-    if (((uint64_t)Zrvf_vu[0] & 0xFFFFFFFFULL) == 0) {
-        acc_val_fregged = 0xFFFFFFFF00000000ULL;
-    } else {
-        acc_val_fregged = boxF32(*(float *)&Zrvf_vu[0]);
-    }
-
-            printf("  DEBUG: Zrvf_vu Raw: 0x%016llx | As Float: %f\n", 
-            (unsigned long long)(uint64_t)acc_val_fregged, 
-            (double)ftype_freg<et>(freg(acc_val_fregged)).v);
-
+printf("  DEBUG: Zrvf_vu Raw: 0x%016llx\n", Zrvf_vu[0]);
+auto acc_val_test2 = boxF32(Zrvf_vu[0]);
+printf("  DEBUG: Zrvf_vu2 Raw: 0x%016llx\n", acc_val_test2);
 
 printf("before: vs2: 0x%08x | fs1: 0x%08x\n",(unsigned int)Vs2_vu[i], (unsigned int)Fs1_bits);
                         auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
                                             ftype_freg<et>(freg(Fs1_bits)),
-                                            ftype_freg<et>(freg(acc_val_fregged)));
-                        Zrvf_vu[0] = fd.v;
+                                            ftype_freg<et>(freg(acc_val_test2)));
+                        Zrvf_vu[0] = freg(fd).v;
                         printf("  DEBUG: New Zrvf_vu written: 0x%016lx\n", (uint64_t)Zrvf_vu[0]);
                     }}, OPZRFVF, SimdFloatMultAccOp);
+
+
+
+
                     0x27: vfrsub_vf({{
                         auto fd = fsub<et>(ftype_freg<et>(freg(Fs1_bits)),
                                            ftype<et>(Vs2_vu[i]));
-                    
                         Vd_vu[i] = fd.v;
                     }}, OPFVF, SimdFloatAddOp);
                     0x28: vfmadd_vf({{

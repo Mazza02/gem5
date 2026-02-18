@@ -86,8 +86,11 @@ class Scoreboard
             // Fixed mapping regs are always ready
             return true;
         }
-
-        assert(phys_reg->flatIndex() < numPhysRegs);
+        if(phys_reg->is(ZrvFloatRegClass)){
+        }else{
+            assert(phys_reg->flatIndex() < numPhysRegs);
+        }
+        
 
         return regScoreBoard[phys_reg->flatIndex()];
     }
