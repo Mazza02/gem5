@@ -265,7 +265,6 @@ class PhysRegFile
             {
     hiddenZrVecRegFile.get(idx, val);
     const uint32_t* dataPtr = reinterpret_cast<const uint32_t*>(val);
-    
     DPRINTF(zr1Debug, "RegFile: Access ZRV %i | First 5 elements: "
             "[0]:0x%08x [1]:0x%08x [2]:0x%08x [3]:0x%08x [4]:0x%08x\n",
             idx, dataPtr[0], dataPtr[1], dataPtr[2], dataPtr[3], dataPtr[4]);

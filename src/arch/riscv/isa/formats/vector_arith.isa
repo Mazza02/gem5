@@ -642,7 +642,7 @@ def format VectorFloatFormat(code, category, *flags) {{
     mask_cond = v0_required and (inst_suffix not in ['vvm', 'vfm'])
     need_elem_idx = mask_cond or code.find("ei") != -1
     is_destructive_fused = iop.op_class == "SimdFloatMultAccOp"
-    is_fp_dest = (category == "OPZRFVF")
+    is_fp_dest = (category == "OPZRFVF" or category == "OPZRSFVF")
     dest_reg_id = ""
     if category == "OPZRFVF":
         dest_reg_id = "zrvFloatRegClass[0]"
@@ -661,10 +661,13 @@ def format VectorFloatFormat(code, category, *flags) {{
         error("not supported category for VectorFloatFormat: %s" % category)
     src2_reg_id = "vecRegClass[_machInst.vs2 + _microIdx]"
 
-    
+    if category == "OPZRSFVF":
+        set_dest_reg_idx = setZrDestWrapper("zrvFloatRegClass[0]")
 
     if category == "OPZRFVF":
         set_dest_reg_idx = setZrDestWrapper(dest_reg_id)
+    elif category == "OPZRSFVF":
+        set_dest_reg_idx += setDestWrapper(dest_reg_id)
     else:
         set_dest_reg_idx = setDestWrapper(dest_reg_id)
 
@@ -676,19 +679,17 @@ def format VectorFloatFormat(code, category, *flags) {{
 
     
 
-    if category == "OPZRFVF":
-        dest_set_src_reg_idx = setSrcWrapper(dest_reg_id)
-    else:
-        dest_set_src_reg_idx = setSrcWrapper(dest_reg_id)
+    dest_set_src_reg_idx = setSrcWrapper(dest_reg_id)
+
 
     if not is_destructive_fused:
         dest_set_src_reg_idx = tailMaskCondSetSrcWrapper(dest_set_src_reg_idx)
     set_src_reg_idx += dest_set_src_reg_idx
 
-    if v0_required and category != "OPZRFVF":
+    if v0_required and category != "OPZRFVF" or v0_required and category == "OPZRSFVF":
         set_src_reg_idx += setSrcVm()
 
-    if v0_required and category == "OPZRFVF":
+    if v0_required and category == "OPZRFVF" or v0_required and category == "OPZRSFVF":
         set_src_reg_idx += setSrcVmZr()
 
     # code

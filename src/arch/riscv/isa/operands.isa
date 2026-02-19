@@ -101,7 +101,7 @@ def operands {{
     'Vs2': VecRegOp('vc', 'VS2', 'IsVector', 3),
     'Vs3': VecRegOp('vc', 'VS3', 'IsVector', 4),
     'Zrvf': ZrVecRegOp('vc', '0', 'IsVector', 4),
-    'Zrvfs': ZrVecRegOp('vc', '0', 'IsVector', 1),
+    'Zrvfs': ZrVecRegOp('vc', '0', 'IsVector', 0),
 #Memory Operand
     'Mem': MemOp('ud', None, (None, 'IsLoad', 'IsStore'), 5),
 

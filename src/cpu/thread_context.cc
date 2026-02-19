@@ -80,7 +80,6 @@ ThreadContext::compare(ThreadContext *one, ThreadContext *two)
             panic("Float reg idx %d doesn't match, one: %#x, two: %#x",
                   id.index(), t1, t2);
     }
-
     // Then loop through the vector registers.
     const auto *vec_class = regClasses.at(VecRegClass);
     std::vector<uint8_t> vec1(vec_class->regBytes());
