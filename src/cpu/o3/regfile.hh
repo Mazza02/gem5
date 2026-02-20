@@ -191,9 +191,6 @@ class PhysRegFile
     {
         const RegClassType type = phys_reg->classValue();
         const RegIndex idx = phys_reg->index();
-        if(type == ZrvFloatRegClass){
-             DPRINTF(zr1Debug, "DEBUG: Reachable ZrvFloatRegClass getReg for index %i\n", phys_reg->index());
-        }
         RegVal val;
         switch (type) {
           case IntRegClass:
@@ -236,11 +233,6 @@ class PhysRegFile
     {
         const RegClassType type = phys_reg->classValue();
         const RegIndex idx = phys_reg->index();
-
-        if(type == ZrvFloatRegClass){
-             DPRINTF(zr1Debug, "DEBUG: Reachable ZrvFloatRegClass getReg for index %i\n", phys_reg->index());
-        }
-
         switch (type) {
           case IntRegClass:
             *(RegVal *)val = getReg(phys_reg);

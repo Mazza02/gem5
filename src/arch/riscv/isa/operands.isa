@@ -99,7 +99,7 @@ def operands {{
     'Vd':  VecRegOp('vc', 'VD', 'IsVector', 1),
     'Vs1': VecRegOp('vc', 'VS1', 'IsVector', 2),
     'Vs2': VecRegOp('vc', 'VS2', 'IsVector', 3),
-    'Vs3': VecRegOp('vc', 'VS3', 'IsVector', 4),
+    'Vs3': VecRegOp('vc', 'VS3', 'IsVector', 3),
     'Zrvf': ZrVecRegOp('vc', '0', 'IsVector', 4),
     'Zrvfs': ZrVecRegOp('vc', '0', 'IsVector', 0),
 #Memory Operand

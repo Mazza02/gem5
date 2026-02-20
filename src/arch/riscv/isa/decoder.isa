@@ -3877,10 +3877,10 @@ decode QUADRANT default Unknown::unknown() {
                             Vs1_vwi, Vs2_vi);
                     }}, OPIVV, SimdReduceAddOp);
                 }
-                format VectorFloatFormat{
+                format VectorRFormat{
                 0x34: vrfsmac_vf({{
-    Vd_vu[i] = Zrvfs_vu[0];
-    Zrvfs_vu[0] = 0;
+    Vd_vu[i] = Zrvfs_vu[i];
+    Zrvfs_vu[i] = 0;
         printf("after: vd.vu: 0x%08x \n", (unsigned int)Vd_vu[i]);
 }}, OPZRSFVF, SimdFloatMultAccOp);
                 }
@@ -5510,14 +5510,18 @@ decode QUADRANT default Unknown::unknown() {
                                            ftype_freg<et>(freg(Fs1_bits)));
                         Vd_vu[i] = fd.v;
                     }}, OPFVF, SimdFloatMultOp);
-                    
+
+                    0x25: vrfmac_vv({{
+                        auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
+                                            ftype<et>(Vs3_vu[i]),
+                                            ftype_freg<et>(freg(boxF32(Zrf_bits))));
+                        Zrf_bits = freg(fd).v;
+                    }}, OPZRFVV, SimdFloatMultAccOp);
                     0x26: vrfmac_vf({{
-auto acc_val_test2 = boxF32(Zrvf_vu[0]);
                         auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
                                             ftype_freg<et>(freg(Fs1_bits)),
-                                            ftype_freg<et>(freg(acc_val_test2)));
-                        Zrvf_vu[0] = freg(fd).v;
-                        printf("  DEBUG: New Zrvf_vu written: 0x%016lx\n", (uint64_t)Zrvf_vu[0]);
+                                            ftype_freg<et>(freg(boxF32(Zrf_bits))));
+                        Zrf_bits = freg(fd).v;
                     }}, OPZRFVF, SimdFloatMultAccOp);
                     0x27: vfrsub_vf({{
                         auto fd = fsub<et>(ftype_freg<et>(freg(Fs1_bits)),
