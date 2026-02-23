@@ -49,7 +49,7 @@ let {{
                "    setSrcRegIdx(_numSrcRegs++, vecRegClass[0]);"
     def setSrcVmZr():
         return "if (!this->vm)\n" + \
-               "    setSrcRegIdx(_numSrcRegs++, zrFloatRegClass[0]);"
+               "    setSrcRegIdx(_numSrcRegs++, zrvFloatRegClass[0]);"
     def vmDeclAndReadData():
         return '''
             [[maybe_unused]] RiscvISA::vreg_t tmp_v0;
@@ -645,7 +645,7 @@ def format VectorFloatFormat(code, category, *flags) {{
     is_fp_dest = (category == "OPZRFVF" or category == "OPZRFVV")
     dest_reg_id = ""
     if category == "OPZRFVF" or category == "OPZRFVV":
-        dest_reg_id = "zrFloatRegClass[0]"
+        dest_reg_id = "zrvFloatRegClass[0]"
     else:
         dest_reg_id = "vecRegClass[_machInst.vd + _microIdx]"
     src1_reg_id = ""
