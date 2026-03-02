@@ -35,7 +35,7 @@ let {{
                "_numTypedDestRegs[VecRegClass]++;\n"
     def setZrDestWrapper(destRegId):
         return "setDestRegIdx(_numDestRegs++, " + destRegId + ");\n" + \
-               "_numTypedDestRegs[ZrFloatRegClass]++;\n"
+               "_numTypedDestRegs[ZrvFloatRegClass]++;\n"
     def setSrcWrapper(srcRegId):
         return "setSrcRegIdx(_numSrcRegs++, " + srcRegId + ");\n"
     def tailMaskCondSetSrcWrapper(setSrcRegCode):
@@ -779,7 +779,7 @@ def format VectorRFormat(code, category, *flags) {{
         flags)
 
     header_output = \
-        VectorFloatMicroDeclare.subst(microiop) + \
+        VectorFloatMicroDeclareZr.subst(microiop) + \
         VectorFloatMacroDeclare.subst(iop)
     decoder_output = \
         VectorFloatMicroConstructor.subst(microiop) + \

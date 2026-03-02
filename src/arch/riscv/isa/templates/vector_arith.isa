@@ -673,6 +673,25 @@ public:
 
 }};
 
+def template VectorFloatMicroDeclareZr {{
+
+template<typename ElemType>
+class %(class_name)s : public %(base_class)s
+{
+private:
+    // vs1, vs2, vs3(old_vd), vm
+    RegId srcRegIdxArr[4];
+    RegId destRegIdxArr[1];
+    bool vm;
+public:
+    %(class_name)s(ExtMachInst _machInst,
+        uint32_t _microVl, uint32_t _microIdx, uint32_t _elen, uint32_t _vlen);
+    Fault execute(ExecContext* xc, trace::InstRecord* traceData)const override;
+    using %(base_class)s::generateDisassembly;
+};
+
+}};
+
 def template VectorFloatMicroConstructor {{
 template<typename ElemType>
 %(class_name)s<ElemType>::%(class_name)s(ExtMachInst _machInst,

@@ -30,11 +30,11 @@ from m5.objects import *
 system = System()
 
 system.clk_domain = SrcClockDomain()
-system.clk_domain.clock = "3GHz"
+system.clk_domain.clock = "6GHz"
 system.clk_domain.voltage_domain = VoltageDomain()
 
 system.mem_mode = "timing"
-system.mem_ranges = [AddrRange("8192MiB")]
+system.mem_ranges = [AddrRange("16384MiB")]
 system.cpu = RiscvO3CPU()
 
 system.membus = SystemXBar()
@@ -55,14 +55,14 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
     "../../",
-    "tests/test-progs/mac/mac",
+    "tests/test-progs/vector_benchmark/matmul_rvvector.exe",
 )
 
 system.workload = SEWorkload.init_compatible(binary)
 
 process = Process()
-process.cmd = [binary]
-system.cpu.workload = process
+process.cmd = [binary, "tests/test-progs/vector_benchmark/data_64.in"]
+system.cpu[0].workload = process
 system.cpu.createThreads()
 
 root = Root(full_system=False, system=system)

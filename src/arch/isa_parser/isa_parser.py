@@ -115,7 +115,7 @@ class Template:
                 "RegId srcRegIdxArr[%d]; RegId destRegIdxArr[%d]"
                 % (
                     d.operands.numSrcRegs + d.srcRegIdxPadding,
-                    d.operands.numDestRegs + d.destRegIdxPadding,
+                    d.operands.numDestRegs + d.destRegIdxPadding+100,
                 )
             )
 
