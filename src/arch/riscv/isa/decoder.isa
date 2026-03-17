@@ -3185,14 +3185,14 @@ decode QUADRANT default Unknown::unknown() {
                 0x24: rfmac_s({{
                 RM_REQUIRED;
                     freg_t fd;
-    fd = freg(f32_mulAdd(f32(freg(Fs1_bits)),
-                         f32(freg(Fs2_bits)),
-                         f32(freg(boxF32(Zrf_bits)))));
+    fd = freg(f64_mulAdd(f64(freg(Fs1_bits)),
+                                         f64(freg(Fs2_bits)),
+                                         f64(freg(Zrf_bits))));
     Zrf_bits = fd.v;
 }}, FloatMultAccOp);
                 0x38: rfsmac_s({{
                     Fd_bits = Zrf_bits;
-                    Zrf_bits = boxF32(0);
+                    Zrf_bits = 0;
                 }}, FloatAddOp);
                 0x2c: fsqrt_s({{
                     if (RS2 != 0) {
@@ -5509,7 +5509,7 @@ decode QUADRANT default Unknown::unknown() {
                                             ftype<et>(Vs3_vu[i]),
                                             ftype_freg<et>(freg(Zrf_bits)));
                         Zrf_bits = fd.v;
-                    }}, OPZRFVV, SimdFloatMultAccOp);
+                    }}, OPZRFVVS, SimdFloatMultAccOp);
                     0x24: vfmul_vf({{
                         auto fd = fmul<et>(ftype<et>(Vs2_vu[i]),
                                            ftype_freg<et>(freg(Fs1_bits)));
@@ -5519,14 +5519,14 @@ decode QUADRANT default Unknown::unknown() {
                     0x25: vrfmac_vv_vector({{
                         auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
                                             ftype<et>(Vs3_vu[i]),
-                                            ftype<et>(Zrvf_vu[0]));
-                        Zrvf_vu[0] = fd.v;
+                                            ftype<et>(Zrvf_vu[i]));
+                        Zrvf_vu[i] = fd.v;
                     }}, OPZRFVV, SimdFloatMultAccOp);
-                    0x26: vrfmac_vf({{
+                    0x26: vrfmac_vf_vector({{
                         auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
                                             ftype_freg<et>(freg(Fs1_bits)),
-                                            ftype_freg<et>(freg(boxF32(Zrvf_vu[0]))));
-                        Zrvf_vu[0] = freg(fd).v;
+                                            ftype<et>(Zrvf_vu[0]));
+                        Zrvf_vu[0] = fd.v;
                     }}, OPZRFVF, SimdFloatMultAccOp);
                     0x27: vfrsub_vf({{
                         auto fd = fsub<et>(ftype_freg<et>(freg(Fs1_bits)),

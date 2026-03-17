@@ -973,6 +973,12 @@ CPU::getReg(PhysRegIdPtr phys_reg, ThreadID tid)
       case VecPredRegClass:
         executeStats[tid]->numVecPredRegReads++;
         break;
+      case ZrFloatRegClass:
+        executeStats[tid]->numZrFloatRegReads++;
+        break;
+      case ZrvFloatRegClass:
+        executeStats[tid]->numZrVecRegReads++;
+        break;
       default:
         break;
     }
@@ -999,6 +1005,12 @@ CPU::getReg(PhysRegIdPtr phys_reg, void *val, ThreadID tid)
       case VecPredRegClass:
         executeStats[tid]->numVecPredRegReads++;
         break;
+      case ZrFloatRegClass:
+        executeStats[tid]->numZrFloatRegReads++;
+        break;
+      case ZrvFloatRegClass:
+        executeStats[tid]->numZrVecRegReads++;
+        break;
       default:
         break;
     }
@@ -1014,6 +1026,9 @@ CPU::getWritableReg(PhysRegIdPtr phys_reg, ThreadID tid)
         break;
       case VecPredRegClass:
         executeStats[tid]->numVecPredRegWrites++;
+        break;
+      case ZrvFloatRegClass:
+        executeStats[tid]->numZrVecRegWrites++;
         break;
       default:
         break;
@@ -1037,6 +1052,12 @@ CPU::setReg(PhysRegIdPtr phys_reg, RegVal val, ThreadID tid)
       case VecRegClass:
       case VecElemClass:
         executeStats[tid]->numVecRegWrites++;
+        break;
+      case ZrFloatRegClass:
+        executeStats[tid]->numZrFloatRegWrites++;
+        break;
+      case ZrvFloatRegClass:
+        executeStats[tid]->numZrVecRegWrites++;
         break;
       case VecPredRegClass:
         executeStats[tid]->numVecPredRegWrites++;
@@ -1063,6 +1084,12 @@ CPU::setReg(PhysRegIdPtr phys_reg, const void *val, ThreadID tid)
       case VecRegClass:
       case VecElemClass:
         executeStats[tid]->numVecRegWrites++;
+        break;
+      case ZrFloatRegClass:
+        executeStats[tid]->numZrFloatRegWrites++;
+        break;
+      case ZrvFloatRegClass:
+        executeStats[tid]->numZrVecRegWrites++;
         break;
       case VecPredRegClass:
         executeStats[tid]->numVecPredRegWrites++;

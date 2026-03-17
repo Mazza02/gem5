@@ -26,37 +26,70 @@
 
 import m5
 from m5.objects import *
+m5.util.addToPath("../")
+from caches import *
+from common import SimpleOpts
 
-system = System()
 
-system.clk_domain = SrcClockDomain()
-system.clk_domain.clock = "6GHz"
-system.clk_domain.voltage_domain = VoltageDomain()
-
-system.mem_mode = "timing"
-system.mem_ranges = [AddrRange("16384MiB")]
-system.cpu = RiscvO3CPU()
-
-system.membus = SystemXBar()
-
-system.cpu.icache_port = system.membus.cpu_side_ports
-system.cpu.dcache_port = system.membus.cpu_side_ports
-
-system.cpu.createInterruptController()
-
-system.mem_ctrl = MemCtrl()
-system.mem_ctrl.dram = DDR4_2400_8x8()
-system.mem_ctrl.dram.range = system.mem_ranges[0]
-system.mem_ctrl.port = system.membus.mem_side_ports
-
-system.system_port = system.membus.cpu_side_ports
 
 thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
     "../../",
-    "tests/test-progs/vector_benchmark/matmul_rvvector.exe",
+    "tests/test-progs/vector_benchmark/matmul_rvvector_noflag.exe",
 )
+
+SimpleOpts.add_option("binary", nargs="?", default=binary)
+
+args = SimpleOpts.parse_args()
+
+system = System()
+
+system.clk_domain = SrcClockDomain()
+system.clk_domain.clock = "1GHz"
+system.clk_domain.voltage_domain = VoltageDomain()
+
+
+
+system.mem_mode = "timing"
+system.mem_ranges = [AddrRange("2048MiB")]
+system.cpu = RiscvO3CPU()
+
+system.cpu.isa = RiscvISA(vlen=512)
+
+system.cpu.icache = L1ICache(args)
+system.cpu.dcache = L1DCache(args)
+
+# Connect the instruction and data caches to the CPU
+system.cpu.icache.connectCPU(system.cpu)
+system.cpu.dcache.connectCPU(system.cpu)
+
+# Create a memory bus, a coherent crossbar, in this case
+system.l2bus = L2XBar()
+
+# Hook the CPU ports up to the l2bus
+system.cpu.icache.connectBus(system.l2bus)
+system.cpu.dcache.connectBus(system.l2bus)
+
+# Create an L2 cache and connect it to the l2bus
+system.l2cache = L2Cache(args)
+system.l2cache.connectCPUSideBus(system.l2bus)
+
+# Create a memory bus
+system.membus = SystemXBar()
+
+# Connect the L2 cache to the membus
+system.l2cache.connectMemSideBus(system.membus)
+
+# create the interrupt controller for the CPU
+system.cpu.createInterruptController()
+
+system.mem_ctrl = MemCtrl()
+system.mem_ctrl.dram = DDR3_1600_8x8()
+system.mem_ctrl.dram.range = system.mem_ranges[0]
+system.mem_ctrl.port = system.membus.mem_side_ports
+
+system.system_port = system.membus.cpu_side_ports
 
 system.workload = SEWorkload.init_compatible(binary)
 

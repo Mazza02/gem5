@@ -36,6 +36,9 @@ let {{
     def setZrDestWrapper(destRegId):
         return "setDestRegIdx(_numDestRegs++, " + destRegId + ");\n" + \
                "_numTypedDestRegs[ZrvFloatRegClass]++;\n"
+    def setZrFDestWrapper(destRegId):
+        return "setDestRegIdx(_numDestRegs++, " + destRegId + ");\n" + \
+               "_numTypedDestRegs[ZrFloatRegClass]++;\n"
     def setSrcWrapper(srcRegId):
         return "setSrcRegIdx(_numSrcRegs++, " + srcRegId + ");\n"
     def tailMaskCondSetSrcWrapper(setSrcRegCode):
@@ -46,10 +49,10 @@ let {{
             + "}\n"
     def setSrcVm():
         return "if (!this->vm)\n" + \
-               "    setSrcRegIdx(_numSrcRegs++, vecRegClass[0]);"
+               "    setSrcRegIdx(_numSrcRegs++, vecRegClass[0]);\n"
     def setSrcVmZr():
         return "if (!this->vm)\n" + \
-               "    setSrcRegIdx(_numSrcRegs++, zrvFloatRegClass[0]);"
+               "    setSrcRegIdx(_numSrcRegs++, zrvFloatRegClass[0]);\n"
     def vmDeclAndReadData():
         return '''
             [[maybe_unused]] RiscvISA::vreg_t tmp_v0;
@@ -61,6 +64,8 @@ let {{
         '''
     def copyOldVd(vd_idx):
         return 'COPY_OLD_VD(%d);' % vd_idx
+    def copyOldVdZr(vd_idx):
+        return 'COPY_OLD_VDZR(%d);' % vd_idx
     def copyOldVdIfVL(vd_idx):
         return 'COPY_OLD_VD_IF_VL(%d);' % vd_idx
     def loopWrapper(code, micro_inst = True):
@@ -642,10 +647,12 @@ def format VectorFloatFormat(code, category, *flags) {{
     mask_cond = v0_required and (inst_suffix not in ['vvm', 'vfm'])
     need_elem_idx = mask_cond or code.find("ei") != -1
     is_destructive_fused = iop.op_class == "SimdFloatMultAccOp"
-    is_fp_dest = (category == "OPZRFVF" or category == "OPZRFVV")
+    is_fp_dest = (category == "OPZRFVF" or category == "OPZRFVV" or category == "OPZRFVVS")
     dest_reg_id = ""
     if category == "OPZRFVF" or category == "OPZRFVV":
         dest_reg_id = "zrvFloatRegClass[0]"
+    elif category == "OPZRFVVS":
+        dest_reg_id = "zrFloatRegClass[0]"
     else:
         dest_reg_id = "vecRegClass[_machInst.vd + _microIdx]"
     src1_reg_id = ""
@@ -655,7 +662,7 @@ def format VectorFloatFormat(code, category, *flags) {{
         src1_reg_id = "floatRegClass[_machInst.rs1]"
     elif category == "OPZRFVF":
         src1_reg_id = "floatRegClass[_machInst.rs1]"
-    elif category == "OPZRFVV":
+    elif category == "OPZRFVV" or category == "OPZRFVVS":
         src1_reg_id = "vecRegClass[_machInst.vs3 + _microIdx]"
     else:
         error("not supported category for VectorFloatFormat: %s" % category)
@@ -663,6 +670,8 @@ def format VectorFloatFormat(code, category, *flags) {{
 
     if category == "OPZRFVF" or category == "OPZRFVV":
         set_dest_reg_idx = setZrDestWrapper(dest_reg_id)
+    elif category == "OPZRFVVS":
+        set_dest_reg_idx = setZrFDestWrapper(dest_reg_id)
     else:
         set_dest_reg_idx = setDestWrapper(dest_reg_id)
 
@@ -703,7 +712,7 @@ def format VectorFloatFormat(code, category, *flags) {{
     if not is_fp_dest:
         fp_dest = copyOldVd(2) 
     else:
-        fp_dest = ""
+        fp_dest = copyOldVdZr(2)
     varith_micro_declare = declareVArithTemplate(Name + "Micro", 'float', 16)
     microiop = InstObjParams(name + "_micro",
         Name + "Micro",

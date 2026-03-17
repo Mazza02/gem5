@@ -47,6 +47,15 @@ output header {{
         tmp_d0.set(0xff);                                                 \
     }                                                                     \
 
+#define COPY_OLD_VDZR(idx)                                                  \
+    if (!machInst.vtype8.vta || (!machInst.vm && !machInst.vtype8.vma)) { \
+        RiscvISA::vreg_t old_vd;                                          \
+        xc->getRegOperand(this, idx, &old_vd);                            \
+        tmp_v0 = old_vd;                                                  \
+    } else {                                                              \
+        tmp_v0.set(0xff);                                                 \
+    }                                                                     \
+
 #define SET_VM_SRC() \
     if (!_machInst.vm) { \
         vmsrcIdx = _numSrcRegs; \

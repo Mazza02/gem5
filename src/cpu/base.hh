@@ -764,6 +764,14 @@ class BaseCPU : public ClockedObject
         statistics::Scalar numCCRegReads;
         statistics::Scalar numCCRegWrites;
 
+        /*Number of zero-register file accesses */
+        statistics::Scalar numZrFloatRegReads;
+        statistics::Scalar numZrFloatRegWrites;
+
+        /*Number of zero-register vector file accesses */
+        statistics::Scalar numZrVecRegReads;
+        statistics::Scalar numZrVecRegWrites;
+        
         /* number of float alu accesses */
         statistics::Scalar numFpAluAccesses;
 
