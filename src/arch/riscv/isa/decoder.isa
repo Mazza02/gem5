@@ -3879,9 +3879,11 @@ decode QUADRANT default Unknown::unknown() {
                 }
                 format VectorRFormat{
                 0x34: vrfsmac_vf({{
-    Vd_vu[i] = Zrvfs_vu[0];
+    Vd_vu[i] = Zrvfs_vu[i];
+    printf("[AFTER]  element: %d, result: %f\n", (int)i, (double)Zrvfs_vu[i]);
     Zrvfs_vu[i] = 0;
-}}, OPZRSFVF, SimdFloatMultAccOp);
+    
+}}, OPZRSFVF, SimdAddOp);
                 }
                 format VectorIntMaskFormat {
                     0x11: decode VM {
@@ -4227,6 +4229,8 @@ decode QUADRANT default Unknown::unknown() {
                         Vd_vu[i] = fd.v;
                     }}, OPFVV, SimdFloatMultAccOp);
                     0x2c: vfmacc_vv({{
+                        printf("[BEFORE] vfmacc: %d, vs1: %f,vs2: %f,  vs3: %f\n", 
+                (int)i, (double)Vs1_vu[i], (double)Vs2_vu[i], (double)Vs3_vu[i]);
                         auto fd = fmadd<et>(ftype<et>(Vs1_vu[i]),
                                             ftype<et>(Vs2_vu[i]),
                                             ftype<et>(Vs3_vu[i]));
@@ -5505,10 +5509,13 @@ decode QUADRANT default Unknown::unknown() {
                         Vd_vu[i] = fd.v;
                     }}, OPFVF, SimdFloatDivOp);
                     0x23: vrfmac_vv_scalar({{
+                        printf("[BEFORE] element: %d, vs2: %f, vs3: %f\n", 
+                (int)i, (double)Vs2_vu[i], (double)Vs3_vu[i]);
                         auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
                                             ftype<et>(Vs3_vu[i]),
                                             ftype_freg<et>(freg(Zrf_bits)));
                         Zrf_bits = fd.v;
+                        printf("[AFTER]  element: %d, result: %f\n", (int)i, (double)fd.v);
                     }}, OPZRFVVS, SimdFloatMultAccOp);
                     0x24: vfmul_vf({{
                         auto fd = fmul<et>(ftype<et>(Vs2_vu[i]),
@@ -5523,10 +5530,15 @@ decode QUADRANT default Unknown::unknown() {
                         Zrvf_vu[i] = fd.v;
                     }}, OPZRFVV, SimdFloatMultAccOp);
                     0x26: vrfmac_vf_vector({{
-                        auto fd = fmadd<et>(ftype<et>(Vs2_vu[i]),
-                                            ftype_freg<et>(freg(Fs1_bits)),
-                                            ftype<et>(Zrvf_vu[0]));
-                        Zrvf_vu[0] = fd.v;
+                        printf("[BEFORE] element: %d, vs2: %f,zrvf: %f,  fs1: %f\n", 
+                (int)i, (double)Vs2_vu[i], (double)Zrvf_vu[i], (double)Fs1_bits);
+                        auto vs2_val = ftype<et>(Vs2_vu[i]);
+    auto fs1_val = ftype_freg<et>(freg(Fs1_bits)); 
+    auto acc_val = ftype<et>(Zrvf_vu[i]);
+
+    auto fd = fmadd<et>(fs1_val, vs2_val, acc_val);
+                        printf("[AFTER]  element: %d, result: %f\n", (int)i, (double)fd.v);
+                        Zrvf_vu[i] = freg(fd).v;
                     }}, OPZRFVF, SimdFloatMultAccOp);
                     0x27: vfrsub_vf({{
                         auto fd = fsub<et>(ftype_freg<et>(freg(Fs1_bits)),
@@ -5558,9 +5570,12 @@ decode QUADRANT default Unknown::unknown() {
                         Vd_vu[i] = fd.v;
                     }}, OPFVF, SimdFloatMultAccOp);
                     0x2c: vfmacc_vf({{
+                        printf("[BEFORE] vfmacc: %d, vs2: %f,vs3: %f,  fs1: %f\n", 
+                (int)i, (double)Vs2_vu[i], (double)Vs3_vu[i], (double)Fs1_bits);
                         auto fd = fmadd<et>(ftype_freg<et>(freg(Fs1_bits)),
                                             ftype<et>(Vs2_vu[i]),
                                             ftype<et>(Vs3_vu[i]));
+                        printf("[AFTER]  vfmacc: %d, result: %f\n", (int)i, (double)fd.v);
                         Vd_vu[i] = fd.v;
                     }}, OPFVF, SimdFloatMultAccOp);
                     0x2d: vfnmacc_vf({{

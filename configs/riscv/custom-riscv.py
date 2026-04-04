@@ -36,7 +36,7 @@ thispath = os.path.dirname(os.path.realpath(__file__))
 binary = os.path.join(
     thispath,
     "../../",
-    "tests/test-progs/vector_benchmark/matmul_rvvector_noflag.exe",
+    "tests/test-progs/vector_benchmark/matmul_rvvector_o2.exe",
 )
 
 SimpleOpts.add_option("binary", nargs="?", default=binary)
@@ -94,7 +94,7 @@ system.system_port = system.membus.cpu_side_ports
 system.workload = SEWorkload.init_compatible(binary)
 
 process = Process()
-process.cmd = [binary, "tests/test-progs/vector_benchmark/data_64.in"]
+process.cmd = [binary, "tests/test-progs/vector_benchmark/data_8.in"]
 system.cpu[0].workload = process
 system.cpu.createThreads()
 
