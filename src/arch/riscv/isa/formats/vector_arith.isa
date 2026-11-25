@@ -356,8 +356,10 @@ def format VectorIntFormat(code, category, *flags) {{
     exec_output = VectorIntMicroExecute.subst(microiop)
     decode_block = VectorIntDecodeBlock.subst(iop)
 }};
-// vectorFloatFormat takes vd as a scalar and not a vector register
-def format Vectorq6kFormat(code, category, *flags) {{
+// read and write vd only runs once while new format was needed for input destination register
+def format Vectorq6kFormat(read_vd, code, write_vd, category, *flags) {{
+    code = read_vd + loopWrapper(code) + write_vd
+
     iop = InstObjParams(
         name,
         Name,

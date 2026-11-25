@@ -5391,39 +5391,30 @@ decode QUADRANT default Unknown::unknown() {
                     }}, OPFVF, SimdFloatMultAccOp);
                 }
                 0x35: Vectorq6kFormat::vq6kdotp42_vv({{
-                    // check the old destination register for old value
-                    // i isnt used because its an unpacking operation
-                    for (uint32_t b = 0; b < vlenb; b++) {
-                        Vd_ub[b] = Vs3_ub[b];
-                    }
-                    const uint32_t quarter = Vs3_ub[4] & 7;
-                    int32_t sumi = 0;
-                    int32_t sums = 0;
-                    // unpacking each value
-                    for (uint32_t n = 0; n < 32; n++) {
-                        // low 4 bits: byte n % 16, nibble n / 16;
-                        // high 2 bits: byte 16 + n % 8, bits 2 * (n / 8)
-                        const uint8_t low =(Vs1_ub[n % 16] >> (4 * (n / 16))) & 0x0F;
-                        const uint8_t high =(Vs1_ub[16 + n % 8] >> (2 * (n / 8))) & 0x03;
-                        // q - 32: bit 5 inverted, sign-extended
-                        const int8_t w = int8_t(low | ((high & 1) << 4) | ((high & 2) ? 0x00 : 0xE0));
-                        sums += int32_t(w) * int32_t(int8_t(Vs2_ub[n]));
-                        if (n % 16 == 15) {
-                            sumi += int32_t(int8_t(Vs1_ub[24 + n / 16]))* sums;
-                            sums = 0;
-                        }
-                    }
+                    // assumes vl =32
+                    const uint32_t quarter = Vs3_vu[4] & 7;
+                    // have to fetch acc from vd and it takes 4 bytes to take out the int32 value, the counter restarts it at quarter 0
+                    // segmented into blocks to run once to read / write destination register
                     uint32_t acc = 0;
                     if (quarter != 0) {
-                        for (uint32_t b = 0; b < 4; b++) {
-                            acc |= uint32_t(Vs3_ub[b]) << (8 * b);
-                        }
+                        acc = uint32_t(Vs3_vu[0]) |
+                              uint32_t(Vs3_vu[1]) << 8 |
+                              uint32_t(Vs3_vu[2]) << 16 |
+                              uint32_t(Vs3_vu[3]) << 24;
                     }
-                    acc += uint32_t(sumi);
-                    for (uint32_t b = 0; b < 4; b++) {
-                        Vd_ub[b] = uint8_t(acc >> (8 * b));
-                    }
-                    Vd_ub[4] = uint8_t((quarter + 1) & 7);
+                }}, {{
+                    const uint8_t low = (Vs1_vu[i % 16] >> (4 * (i / 16))) & 0x0F;
+                    const uint8_t high =(Vs1_vu[16 + i % 8] >> (2 * (i / 8))) & 0x03;
+                    // q - 32: bit 5 inverted, sign extended
+                    const int8_t w = int8_t(low | ((high & 1) << 4) |((high & 2) ? 0x00 : 0xE0));
+                    // accumulate and scale from vs1
+                    acc += uint32_t(int32_t(int8_t(Vs1_vu[24 + i / 16])) *int32_t(w) * int32_t(vi(Vs2_vu[i])));
+                }}, {{
+                    Vd_vu[0] = vu(acc);
+                    Vd_vu[1] = vu(acc >> 8);
+                    Vd_vu[2] = vu(acc >> 16);
+                    Vd_vu[3] = vu(acc >> 24);
+                    Vd_vu[4] = vu((quarter + 1) & 7);
                 }}, OPFVF, SimdMultAccOp);
                 format VectorFloatWideningFormat {
                     0x30: vfwadd_vf({{
